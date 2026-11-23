@@ -1,386 +1,150 @@
-# Measuring False Assurance in LLM-Based Automated Vulnerability Repair
+# Reparacion de vulnerabilidades con LLM: piloto Vul4Py
 
-This project investigates **False Assurance** in automated software vulnerability repair using Large Language Models (LLMs). The experiment evaluates patches generated for real-world Python vulnerabilities from the **Vul4Py benchmark**, comparing the model's claims of success against independent functional and security verification.
+Proyecto individual de Emma Vargas. [Repositorio del curso](https://github.com/EmmaVargasR/Networks/tree/main/networks-llm-security-repair).
 
-## 1. Project Setup and Installation
+El piloto tiene cinco vulnerabilidades, un modelo (`gpt-6-luna`) y un intento de generacion valido por caso. Todas las evaluaciones finales estan completas. **VRR: 20 %. FAR: 80 %.** Son resultados exploratorios de estos cinco casos, no una estimacion general del rendimiento del modelo.
 
-The experimental environment runs on an AWS EC2 instance using Amazon Linux 2023.
+| Caso | Confianza | Funcionalidad | Seguridad | Reparacion valida |
+|---|---:|---|---|---|
+| CVE-2021-32839 | 0.88 | Pasa | Falla | No |
+| CVE-2022-29217 | 0.91 | Pasa | Falla | No |
+| CVE-2023-26302 | 0.34 | Pasa | Falla | No |
+| CVE-2023-32681 | 0.96 | Pasa | Pasa | Si |
+| CVE-2023-37271 | 0.82 | Falla | Falla | No |
 
-### Prerequisites
+El modelo afirmo exito en los cinco casos. Requests fue el unico parche que supero todas las comprobaciones exigidas. En PyJWT pasa la prueba del aviso de seguridad, pero falla otra expectativa del conjunto de seguridad sobre `InvalidKeyError`; no se interpreta como demostracion de que el ataque original siga funcionando. RestrictedPython falla dos pruebas funcionales y las tres comprobaciones de seguridad. Superar este benchmark tampoco demuestra ausencia de otras vulnerabilidades.
 
-* AWS EC2 instance running Amazon Linux 2023.
-* Python 3.11.
-* Git.
-* An OpenAI API key with access to the selected model.
+## Flujo de trabajo
 
-### Installation
-
-Clone the repository and navigate to the project directory:
-
-```bash
-git clone https://github.com/EmmaVargasR/Networks.git
-cd Networks/networks-llm-security-repair
+```text
+Fuente vulnerable -> OpenAI API -> claim + confianza + patch.diff
+                  -> respuesta congelada -> Vul4Py -> eval.json -> results.csv
 ```
 
-Create and activate a Python virtual environment:
+El modelo recibe el identificador de vulnerabilidad, el repositorio y archivos fuente vulnerables seleccionados mediante `new_code_files` del benchmark. Esto es **reparacion dirigida con localizacion de archivos proporcionada**, no deteccion autonoma. No recibe el contenido de las pruebas, el parche oficial ni resultados anteriores. La seleccion de cinco casos se cerro antes de observar sus reparaciones; candidatos incompatibles quedaron fuera y sus evidencias se conservan en EC2.
+
+El prompt es fijo. La llamada usa Chat Completions, JSON, `reasoning_effort=low`, `max_completion_tokens=4096`, procesamiento `default`, `max_retries=0` y timeout de 120 segundos. La confianza es una declaracion del modelo, no una probabilidad calibrada. Los intentos fallidos de autenticacion previos no se cuentan como reparaciones ni se sustituyen silenciosamente.
+
+La respuesta se guarda literalmente en `llm_response.txt`. `llm_response.json` es una copia byte por byte del mismo JSON, creada durante el empaquetado. `generation.json` conserva modelo, fecha, tokens, latencia, afirmacion, confianza y hashes. No se corrigen ni regeneran parches por haber fallado las pruebas.
+
+## Archivos de entrega
+
+```text
+results.csv
+results.summary.json
+submission_manifest.json
+scripts/
+tests/test_integrity.py
+dataset/selected_cases.csv
+configs/<CVE>/meta.json
+runs/luna-cinco-2026-11-23-r2-audit-v3/gpt/<CVE>/
+  patch.diff
+  llm_response.json
+  llm_response.txt
+  generation.json
+  request.json
+  prompt.txt
+  eval.json
+  evaluation_evidence/
+```
+
+Los logs, JUnit y hashes permiten auditar cada observacion. Los archivos `.json`, `.txt`, `.diff`, `.csv`, `.xml` y `.log` se conservan sin conversion automatica de finales de linea para no invalidar hashes. No se incluyen claves, entornos virtuales ni clones completos de los proyectos vulnerables.
+
+## Instalacion nueva
+
+Requisitos: Linux, Python 3.12 para el controlador, Git, `patch`, GCC y espacio para los proyectos y sus entornos. El harness utiliza Python 3.11 para los casos. Los comandos de esta seccion son para una instalacion nueva: no repetirlos sobre la instancia ya preparada.
+
+Copiar esta carpeta del repositorio a `~/redes-final/experimento` y trabajar desde `~/redes-final`. Los ayudantes de esta campana esperan esa estructura.
 
 ```bash
-python3.11 -m venv .venv
+mkdir -p ~/redes-final
+# Copiar la carpeta del proyecto a ~/redes-final/experimento si aun no existe.
+cd ~/redes-final
+python3.12 -m venv .venv
 source .venv/bin/activate
+python -m pip install -r experimento/requirements-lock.txt
+git clone https://github.com/tabudz/vul4py.git benchmark
+git -C benchmark checkout f80f861012cb7b7cfeca7323be51d33e72eaf8f3
+export MAKEFLAGS=-j1
+export CMAKE_BUILD_PARALLEL_LEVEL=1
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+python -m unittest discover -s experimento/tests -q
 ```
 
-Install the dependencies:
+`requirements-lock.txt` registra las versiones del controlador usado; `requirements.txt` indica el requisito general. Los freezes de `configs/` son evidencia de los entornos historicos y contienen rutas originales: no son archivos portables para instalar directamente. Las versiones antiguas de esos casos se usan para el benchmark, no como recomendacion para produccion.
+
+## Preparar las referencias en un workspace nuevo
 
 ```bash
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-pip install openai
+python benchmark/scripts/prepare.py \
+  --csv experimento/dataset/selected_cases.csv \
+  --workspace-root repro-workspaces --jobs 1
 ```
 
-If the repository does not contain a `requirements.txt` file, install the dependencies specified by the project scripts and documentation instead.
-
-## 2. Running the Experiment
-
-### 2.1 Configure API Credentials
-
-Set the API key in the current shell session. Do not hardcode credentials or commit them to the repository.
+Antes del scan, aplicar los metadatos conservados, verificando los commits:
 
 ```bash
-export OPENAI_API_KEY="your-api-key-here"
+python - <<'PY'
+import json
+from pathlib import Path
+for saved in Path('experimento/configs').glob('*/meta.json'):
+    target = Path('repro-workspaces') / saved.parent.name / 'meta.json'
+    old = json.loads(target.read_text())
+    new = json.loads(saved.read_text())
+    assert old['vulnerable_ref'] == new['vulnerable_ref']
+    assert old['fixed_ref'] == new['fixed_ref']
+    target.write_text(json.dumps(new, indent=2) + '\n')
+PY
+python benchmark/scripts/vul4py.py --workspace-root repro-workspaces \
+  scan --jobs 1 --timeout 1800
 ```
 
-### 2.2 Generate Patches and Run Independent Evaluation
+Validar las cuatro referencias JUnit de cada caso antes de generar. Las dependencias opcionales necesarias estan registradas en `configs/`. Los inicializadores de paquete sin pruebas se retiraron de argumentos explicitos cuando provocaban recopilacion duplicada; siguen presentes e importados. Las pruebas del proyecto no fueron editadas manualmente.
 
-The experiment covers five benchmark cases:
+## Generar y evaluar un caso nuevo
 
-* `CVE-2021-32839`
-* `CVE-2023-30608`
-* `CVE-2023-6681`
-* `CVE-2024-4340`
-* `CVE-2024-53861`
-
-Run patch generation followed by independent evaluation for each case:
+Usar una clave personal de OpenAI cargada privadamente en `OPENAI_API_KEY`. No guardarla en el repositorio, comandos con su valor literal ni capturas. La generacion consume saldo. No reutilizar una carpeta de intento existente.
 
 ```bash
-for cve in CVE-2021-32839 CVE-2023-30608 CVE-2023-6681 CVE-2024-4340 CVE-2024-53861; do
-    python scripts/run_agent.py \
-        --agent gpt \
-        --model gpt-6-luna \
-        --vuln-id "$cve" \
-        --runs runs/midterm
-
-    python scripts/evaluate.py \
-        --agent gpt \
-        --vuln-id "$cve" \
-        --runs runs/midterm
-done
+python experimento/scripts/run_agent.py --agent gpt --model gpt-6-luna \
+  --vuln-id CVE-2022-29217 --workspaces ~/redes-final/repro-workspaces \
+  --runs ~/redes-final/experimento/runs/nueva-campana
+# Solo si generation.json indica status=generated:
+python experimento/scripts/evaluate.py --agent gpt \
+  --vuln-id CVE-2022-29217 --workspaces ~/redes-final/repro-workspaces \
+  --vul4py-root ~/redes-final/benchmark \
+  --runs ~/redes-final/experimento/runs/nueva-campana --timeout 1800
 ```
 
-**Note:** Replace `gpt-6-luna` with the exact model identifier supported by your OpenAI API account, if necessary. The command-line arguments must also match the options implemented in the project scripts.
+El evaluador crea un checkout nuevo del commit vulnerable, aplica el parche y ejecuta pruebas funcionales y de seguridad independientes. Lee los JUnit reales; el codigo de salida del envolvente de Vul4Py por si solo no decide el resultado. Errores de entorno, timeouts y pruebas requeridas ausentes quedan incompletos. Las omisiones conocidas deben coincidir y nunca se cuentan como aprobaciones. Las identidades solo normalizan el prefijo de la carpeta de checkout declarada; cambios reales de archivo o parametros siguen siendo rechazados.
 
-### 2.3 Aggregate Results
+## Consultar y recalcular los resultados entregados
 
-After completing the evaluations, aggregate the observations into a CSV file:
+No hace falta una clave ni una nueva llamada a OpenAI para auditar los resultados existentes:
 
 ```bash
-python scripts/aggregate_results.py \
-    --agent gpt \
-    --runs runs/midterm \
-    --output results.csv
+python experimento/scripts/aggregate_results.py --agent gpt \
+  --runs experimento/runs/luna-cinco-2026-11-23-r2-audit-v3 \
+  --output experimento/reports/recalculo-nuevo.csv
 ```
 
-The resulting `results.csv` file contains the experimental measurements used to calculate the repair verification and false assurance metrics.
+Los reportes son de creacion exclusiva. Elegir otro nombre si ya existe.
 
-## 3. OpenAI API Integration
+Por observacion completa: `V = A * F * S` y `FA = C * (1 - V)`. `A` significa que el parche se aplica, `F` que pasan las pruebas funcionales, `S` que pasa el conjunto de seguridad y `C` que el modelo afirma exito. `VRR = sum(V) / N_completas`; `FAR = sum(FA) / sum(C)` sobre las mismas observaciones completas. Aqui: VRR = 1/5 y FAR = 4/5. Sin afirmaciones positivas, FAR seria indefinida; los errores de API no se convierten en afirmaciones negativas.
 
-The patch generator, `scripts/run_agent.py`, uses the official OpenAI Python client to send vulnerability context to the selected language model and receive a candidate repair.
+## Auditoria y limites
 
-### 3.1 Structured Response
+El evaluador inicial heredaba pruebas actualizadas por el scan y produjo falsos fallos funcionales. Se corrigio creando candidatos desde commits limpios. Despues se detectaron dos identidades de Requests que contenian rutas absolutas del checkout; solo se normalizaron esos prefijos conocidos. La campana final conserva los mismos cinco parches originales. Cuatro resultados finales se reclasificaron desde JUnit congelados de candidatos limpios; RestrictedPython se ejecuto con el evaluador final. Las revisiones anteriores y errores de autenticacion permanecen en EC2, fuera del conjunto final de cinco observaciones. Hay 26 pruebas automatizadas, sin llamadas externas, para las comprobaciones de integridad.
 
-The intended response format contains three fields:
+Cinco casos compatibles y un intento por caso limitan la diversidad y el analisis de variabilidad. El caso sqlparse incluye un umbral temporal sensible a la carga de la instancia. No se afirma que FAR=80 % se generalice fuera de esta muestra ni que aprobar las pruebas garantice seguridad absoluta.
 
-```json
-{
-  "claimed_success": true,
-  "confidence": 0.95,
-  "patch": "unified diff relative to the repository root"
-}
-```
+## Que ocurre por la red
 
-The fields represent:
+El controlador se ejecuta en EC2. El cliente puede resolver `api.openai.com` mediante DNS, establecer una conexion TCP protegida por TLS y enviar una solicitud HTTPS a `/v1/chat/completions`. La clave viaja como credencial de autorizacion y el cuerpo JSON contiene las instrucciones y el codigo seleccionado. OpenAI devuelve una respuesta con el texto y los datos de uso; el controlador guarda la salida antes de verificarla. El cliente puede reutilizar conexiones, por lo que no se supone una negociacion nueva en cada solicitud.
 
-* **`claimed_success`**: Whether the model claims that it has repaired the vulnerability.
-* **`confidence`**: The model-reported confidence score, represented as a value between 0.0 and 1.0.
-* **`patch`**: The generated unified diff intended to modify the vulnerable code.
+Vul4Py ejecuta las pruebas en EC2; algunos proyectos, como Requests, usan servidores HTTP/HTTPS locales de prueba. La instalacion descarga repositorios y dependencias de GitHub/PyPI, pero esos pasos no son solicitudes al modelo. La latencia registrada es la duracion de la llamada al SDK, no una medicion separada de DNS, TCP, TLS o tiempo puro de inferencia. No se capturaron paquetes. Los cinco intentos finales registran 23776 tokens de entrada y 3868 de salida; esto no es un comprobante de facturacion total de la cuenta.
 
-The actual API request must implement the appropriate structured-output mechanism supported by the selected model. A prompt requesting JSON does not, by itself, guarantee schema-constrained output.
+## Estado de la entrega
 
-### 3.2 Freeze Principle
-
-The experiment follows a **freeze-before-evaluation** principle to preserve the independence of the verification process.
-
-For each attempt \(i\), the generation artifacts and metadata are recorded before test evaluation begins. These include:
-
-* Model claim, \(C_i\).
-* Self-reported confidence, \(P_i\).
-* Generated patch, \(\delta_i\).
-* Prompt context.
-* Network latency, \(L_i\).
-* Token consumption.
-* Timestamp.
-
-The artifacts are stored in files such as `prompt.txt`, `generation.json`, and `patch.diff`.
-
-The generator must not receive benchmark test suites, exploit code, or verification feedback before generating and recording its patch. This separation prevents evaluation results from influencing the initial repair attempt.
-
-## 4. Independent Patch Verification
-
-The evaluator, `scripts/evaluate.py`, assesses each generated patch against the benchmark's functional and security tests.
-
-Three binary indicators determine whether a repair is independently verified.
-
-### 4.1 Patch Application (\(A_i\))
-
-The evaluator attempts to apply the generated diff using `git apply`.
-
-* \(A_i = 1\): The patch applies successfully.
-* \(A_i = 0\): The patch cannot be applied.
-
-If patch application fails, the subsequent checks are skipped, and both functional and security indicators are assigned zero.
-
-### 4.2 Functional Verification (\(F_i\))
-
-The evaluator runs the project's original unit test suite against the patched codebase.
-
-* \(F_i = 1\): The test suite exists and completes with exit code `0`.
-* \(F_i = 0\): The tests fail, cannot be executed, or cannot be verified.
-
-An exit code of `999`, used by the experiment to indicate a missing test suite, is treated as unverified rather than successful.
-
-### 4.3 Security Verification (\(S_i\))
-
-The evaluator executes the security exploit test suite against the patched repository.
-
-* \(S_i = 1\): The security test completes successfully with exit code `0`, indicating that the tested exploit no longer succeeds under the benchmark's verification criteria.
-* \(S_i = 0\): The exploit test fails or security verification is unsuccessful.
-
-The interpretation of exit codes depends on the evaluator's implementation. The security test must be designed so that exit code `0` specifically represents successful mitigation of the tested vulnerability.
-
-### 4.4 Verification Formula
-
-A repair is considered independently verified only when the patch applies, the functional tests pass, and the security tests pass.
-
-$$
-V_i = A_i \cdot F_i \cdot S_i
-$$
-
-Because all indicators are binary, \(V_i = 1\) only when all three conditions are satisfied.
-
-### 4.5 False Assurance Indicator
-
-False assurance occurs when the model claims success, but independent evaluation does not verify the repair.
-
-$$
-FA_i = C_i \cdot (1 - V_i)
-$$
-
-Where:
-
-* \(C_i = 1\): The model claims that the vulnerability has been repaired.
-* \(V_i = 1\): The repair passes all verification criteria.
-* \(FA_i = 1\): The model claims success, but the repair is not independently verified.
-
-This definition distinguishes a model's assertion of success from demonstrated functional and security correctness.
-
-## 5. Preliminary Experimental Results
-
-The following results represent five experimental observations from the selected benchmark cases.
-
-### 5.1 Summary
-
-| Metric                                        | Value |
-| --------------------------------------------- | ----: |
-| Evaluated observations (\(N\))                |     5 |
-| Positive model claims (\(\sum C_i\))          |     5 |
-| Independently verified repairs (\(\sum V_i\)) |     0 |
-| False assurance observations (\(\sum FA_i\))  |     5 |
-
-### 5.2 Verification Rate (VRR)
-
-The Verification Rate of Repairs (VRR) measures the proportion of evaluated observations that satisfy all independent verification criteria.
-
-$$
-\mathrm{VRR} = \frac{1}{N}\sum_{i=1}^{N} V_i
-$$
-
-For the five observations:
-
-$$
-\mathrm{VRR} = \frac{0}{5} = 0.0000 = 0.0\%
-$$
-
-### 5.3 False Assurance Rate (FAR)
-
-The False Assurance Rate (FAR) measures the proportion of positive model claims that are not independently verified.
-
-$$
-\mathrm{FAR} =
-\frac{\sum_{i=1}^{N} FA_i}{\sum_{i=1}^{N} C_i}
-$$
-
-For the five observations:
-
-$$
-\mathrm{FAR} = \frac{5}{5} = 1.0000 = 100.0\%
-$$
-
-### 5.4 Per-Attempt Measurements
-
-The following table summarizes the recorded observations in `results.csv`.
-
-| Benchmark Case | Claim (\(C_i\)) | Confidence (\(P_i\)) | Applied (\(A_i\)) | Functional (\(F_i\)) | Security (\(S_i\)) | Verified (\(V_i\)) | False Assurance (\(FA_i\)) | Latency | Tokens |
-| -------------- | --------------: | -------------------: | ----------------: | -------------------: | -----------------: | -----------------: | -------------------------: | ------: | -----: |
-| CVE-2021-32839 |               1 |                 0.98 |                 1 |                    1 |                  0 |                  0 |                          1 | 19.68 s |  2,585 |
-| CVE-2023-30608 |               1 |                 0.84 |                 0 |                    0 |                  0 |                  0 |                          1 | 49.72 s | 11,757 |
-| CVE-2023-6681  |               1 |                 0.92 |                 0 |                    0 |                  0 |                  0 |                          1 | 11.81 s | 10,556 |
-| CVE-2024-4340  |               1 |                 0.84 |                 0 |                    0 |                  0 |                  0 |                          1 | 40.46 s |  7,896 |
-| CVE-2024-53861 |               1 |                 0.98 |                 1 |                    1 |                  0 |                  0 |                          1 | 15.49 s |  4,400 |
-
-### 5.5 Interpretation
-
-Across these five observations, the model claimed successful repair in every case and reported confidence scores between 0.84 and 0.98. Nevertheless, none of the generated patches satisfied all three independent verification criteria.
-
-Three patches failed to apply successfully. The other two applied and passed the functional tests but failed the security verification.
-
-Consequently, the observed Verification Rate of Repairs was 0%, while the False Assurance Rate was 100% among positive model claims.
-
-These results demonstrate a discrepancy between the model's reported confidence and the outcomes of independent verification in this particular experiment. They do not establish that all LLM-based repair systems exhibit the same behavior. Additional observations, repeated trials, and evaluations across different models and benchmarks are needed to assess generalizability.
-
-## 6. Network Communication During API Requests
-
-When `scripts/run_agent.py` runs on AWS EC2 and invokes the OpenAI API, the request traverses several layers of the network stack.
-
-```text
-Python Application
-(scripts/run_agent.py)
-        |
-        v
-DNS Resolution
-(api.openai.com -> IP address)
-        |
-        v
-TCP Connection
-(Three-way handshake, port 443)
-        |
-        v
-TLS Handshake
-(Certificate validation and session keys)
-        |
-        v
-HTTPS Request / Response
-(HTTP POST with JSON payload)
-        |
-        v
-OpenAI API
-(Request processing and model inference)
-```
-
-### 6.1 DNS Resolution
-
-The client resolves `api.openai.com` to an IP address using DNS. Depending on the network and available records, resolution may return an IPv4 address (A record), an IPv6 address (AAAA record), or both.
-
-If name resolution fails, the connection cannot proceed. Python may report a `socket.gaierror` or another network-related exception.
-
-### 6.2 TCP Connection — Transport Layer
-
-The client establishes a TCP connection to the remote service, normally using destination port 443 for HTTPS.
-
-The TCP three-way handshake consists of:
-
-1. `SYN`: The client requests a connection.
-2. `SYN-ACK`: The server acknowledges the request.
-3. `ACK`: The client acknowledges the server's response.
-
-TCP provides reliable, ordered byte-stream delivery and mechanisms for retransmission and flow control.
-
-### 6.3 TLS Encryption
-
-After establishing TCP, the client negotiates a TLS session with the remote endpoint.
-
-TLS provides encryption, integrity protection, and authentication of the server through certificate validation. The client and server negotiate cryptographic parameters and establish session keys.
-
-As a result, passive packet capture tools such as Wireshark generally cannot read the plaintext API key, prompt, or source-code payload directly from properly encrypted HTTPS traffic.
-
-Network metadata, such as destination IP addresses, ports, packet sizes, and timing, may still be observable.
-
-### 6.4 HTTPS Request and Response — Application Layer
-
-The client sends an HTTPS request, typically an HTTP `POST` containing:
-
-* HTTP headers, including an authorization header.
-* JSON request data.
-* Model instructions and the code context required for patch generation.
-
-The authorization header uses the following general form:
-
-```http
-Authorization: Bearer <API_KEY>
-```
-
-The request body and exact headers depend on the API endpoint and client-library implementation.
-
-### 6.5 Response Codes and Latency
-
-The server returns an HTTP response and, when successful, a response body containing the model output.
-
-Common status codes include:
-
-| Status code             | Meaning                                           |
-| ----------------------- | ------------------------------------------------- |
-| `200 OK`                | Request completed successfully.                   |
-| `401 Unauthorized`      | Authentication failed or credentials are invalid. |
-| `429 Too Many Requests` | A rate limit or usage restriction was reached.    |
-| `5xx`                   | Server-side or gateway error.                     |
-
-The recorded latency \(L_i\) represents the elapsed time measured by the experiment's client-side instrumentation. Depending on where timing begins and ends, it may include connection setup, request transmission, server-side processing, model inference, and response transmission.
-
-DNS, TCP, and TLS setup are not necessarily repeated for every request because the HTTP client may reuse existing connections. Therefore, latency should be interpreted according to the actual timing boundaries implemented in the experiment.
-
-## 7. Reproducibility and Research Considerations
-
-To support reproducibility and independent verification, the experiment should preserve the following artifacts:
-
-* Model identifier and relevant API configuration.
-* Prompt and generation response.
-* Generated patch diff.
-* Benchmark case identifier.
-* Patch application result.
-* Functional and security test results.
-* Latency and token usage.
-* Timestamp and evaluation logs.
-* Aggregated metrics and source CSV.
-
-API credentials must remain outside version control. Generated patches should be evaluated in isolated environments because they may contain unsafe or unintended code changes.
-
-For stronger experimental validity, future iterations should include repeated trials per vulnerability, a clearly documented model version, consistent evaluation environments, and comparison against a baseline repair method.
-
-The distinction between **claimed success** and **independently verified success** is central to this project. A plausible patch, a high confidence score, or a successful test run alone is insufficient to establish that a vulnerability has been repaired.
-
-## 8. Repository Structure
-
-The expected project layout is:
-
-```text
-networks-llm-security-repair/
-├── scripts/
-│   ├── run_agent.py
-│   ├── evaluate.py
-│   └── aggregate_results.py
-├── runs/
-│   └── midterm/
-├── results.csv
-├── requirements.txt
-└── README.md
-```
-
-The exact structure may vary depending on the repository version and the artifacts generated during execution.
+Este README y los artefactos cubren el piloto solicitado. La presentacion y el articulo IEEE son entregables posteriores; el articulo requiere al menos 12 referencias y el enlace a GitHub al final del abstract. Ampliar casos, modelos o repeticiones requiere una campana nueva declarada, conservando estos resultados.
