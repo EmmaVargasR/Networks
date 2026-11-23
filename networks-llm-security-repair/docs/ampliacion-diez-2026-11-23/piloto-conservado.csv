@@ -1,0 +1,6 @@
+vuln_id,repo_url,fix_commit
+CVE-2021-32839,https://github.com/andialbrecht/sqlparse,8238a9e450ed1524e40cb3a8b0b3c00606903aeb
+CVE-2022-29217,https://github.com/jpadilla/pyjwt,9c528670c455b8d948aff95ed50e22940d1ad3fc
+CVE-2023-26302,https://github.com/executablebooks/markdown-it-py,53ca3e9c2b9e9b295f6abf7f4ad2730a9b70f68c
+CVE-2023-32681,https://github.com/psf/requests,74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5
+CVE-2023-37271,https://github.com/zopefoundation/RestrictedPython,c8eca66ae49081f0016d2e1f094c3d72095ef531

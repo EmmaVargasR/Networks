@@ -1,0 +1,99 @@
+{
+  "created_utc": "2026-11-23T17:09:38.251565+00:00",
+  "status": "prospective plan; new candidates not yet validated",
+  "target_total_distinct_cases": 10,
+  "preserved_pilot_cases": [
+    "CVE-2021-32839",
+    "CVE-2022-29217",
+    "CVE-2023-26302",
+    "CVE-2023-32681",
+    "CVE-2023-37271"
+  ],
+  "primary_candidates_in_order": [
+    "CVE-2025-43859",
+    "CVE-2024-6844",
+    "CVE-2025-46656",
+    "CVE-2023-47163",
+    "CVE-2023-32309"
+  ],
+  "reserve_candidates_in_order": [
+    "CVE-2023-34457",
+    "CVE-2022-3102",
+    "CVE-2025-24359"
+  ],
+  "model": "gpt-6-luna",
+  "valid_generations_per_case": 1,
+  "automatic_generation_retries": 0,
+  "reasoning_effort": "low",
+  "max_completion_tokens": 4096,
+  "service_tier": "default",
+  "max_context_files": 4,
+  "max_context_characters": 60000,
+  "benchmark_commit": "f80f861012cb7b7cfeca7323be51d33e72eaf8f3",
+  "dataset_sha256": "38e3b3f595bcd0ebc7a3a7bbc5200026eee71ab45ff6b808b6ff5e8c39b17547",
+  "pilot_artifact_hashes": {
+    "CVE-2021-32839": {
+      "generation.json": "3dc70a9a0d74f585b2023a18a49ec9f41a2d3af84bc690beef943e28402eaa79",
+      "patch.diff": "f680679510117076d25fe91b018e54aaa3ed2fa19945d594f506b07886b2f9ab",
+      "request.json": "1987014c36440a2ab4af38337c1157d32172bd36ac78f9dc5d5a606385f5d68a",
+      "eval.json": "953e5b3f6d453133f1c061c0a82ae48ff40a54935fbcbd73121ef9a06e6911c1"
+    },
+    "CVE-2022-29217": {
+      "generation.json": "477a27939922918da49ccb85cc883835a29eaf9fd79370923967d78b8e0e6c37",
+      "patch.diff": "17e37c95b3cf840d7369456990d5133f07308e4dbe924e02b2f550a7839624b1",
+      "request.json": "3f5a390d0ebed1de4bd1104e9905c87f011374413cff4fe40f8a43b0f0a92d09",
+      "eval.json": "44b54a80fed61190189c1d9018db2f23964699db148c7b86fb80b11f720661fd"
+    },
+    "CVE-2023-26302": {
+      "generation.json": "17cd99a19b3c0712539ff609e131bcfbe43d44745ade753f6743153cfff0331b",
+      "patch.diff": "05abb079331970eeb73669473d08ebb3e74e2f2663b30c8f773d0f13544d1fb1",
+      "request.json": "d1310ada6d0b3af39e17fcd4ea4660748fd7f09ab2d8c13695b1b88cb3e6e189",
+      "eval.json": "ee0627df57352addc6814d113ce82eafcea29aee0bec3510c664451523803582"
+    },
+    "CVE-2023-32681": {
+      "generation.json": "1a50e05153e8afc5a748359f1369da85f4bbcae54b53d53823d9c823053f8ebd",
+      "patch.diff": "b5579d07d66ff26968b057d1cc2ff4fe212d7c72a20dc74eacd0451d8e793ce8",
+      "request.json": "3137a7d4a0494283f3719745863b5d3f4f012e3f5f0e454a9574851f5ae9de80",
+      "eval.json": "b8f2ca37a52b1ef60977a68fb3ffd24ada46c0a4260643bd007930ac7aefdb38"
+    },
+    "CVE-2023-37271": {
+      "generation.json": "147230a3c438c9b1ec299790e591aade5b0e29aae4836f2105917f29b5a23a44",
+      "patch.diff": "07f1a0c095cfc50980aa62e58c4bd0a80dffcc7af8353e1d9c482270dae36e37",
+      "request.json": "45bd1ef64c1cfaa311535011e065cad5e030bb80f458355b3c961ff2c5fc4bc3",
+      "eval.json": "4953e32d4d5baa36cc67982ee0bf51da61b61cc9b670c8be74977c3610a0f5e9"
+    }
+  },
+  "inclusion": [
+    "Select by reproducible benchmark baseline and available source context, before model generation.",
+    "Functional tests must pass in vulnerable and fixed; security tests must fail in vulnerable and pass in fixed.",
+    "No errors or missing required tests; accept only matching documented baseline skips.",
+    "Preserve original application and tests; document environment and harness adjustments.",
+    "Five new projects, distinct from pilot projects, in the declared candidate order.",
+    "Choose first five eligible candidates; if fewer than five qualify, stop and amend the candidate plan before API calls."
+  ],
+  "exclusion_log_required": true,
+  "exclude_for": [
+    "unresolved baseline failure",
+    "infrastructure failure or timeout",
+    "insufficient available source context under unchanged limits",
+    "resource constraints"
+  ],
+  "never_exclude_for": [
+    "model refusal",
+    "low confidence",
+    "patch rejection",
+    "failed generated repair"
+  ],
+  "operational_limits": {
+    "workers": 1,
+    "threads": 1,
+    "minimum_free_disk_gib_before_preparation": 4
+  },
+  "analysis": [
+    "Report original five and new five separately; pooled ten is descriptive.",
+    "Count preserved pilot attempts once; copied artifacts are not new repetitions.",
+    "Report incomplete attempts and denominators; FAR is undefined without positive claims.",
+    "No model comparison, confidence threshold, or statistical superiority claim in this extension."
+  ],
+  "semgrep": "Mentioned in Notion header; role needs clarification or a separately labelled post-hoc analysis. Not part of V/FA."
+}
