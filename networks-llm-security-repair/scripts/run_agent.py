@@ -15,6 +15,7 @@ import sys
 import time
 from pathlib import Path
 from typing import List, Optional
+from repair_common import parse_payload, sha256, write_json
 
 HERE = Path(__file__).resolve().parent.parent
 WORKSPACES = HERE / "workspaces"
@@ -43,18 +44,14 @@ def collect_context_files(case_dir: Path, meta: dict, max_files: int = 4, max_by
     for p in meta.get("new_code_files", []):
         if p not in targets:
             targets.append(p)
-    if not targets:
-        for p in meta.get("baseline_test_files", []):
-            d = os.path.dirname(p) or "."
-            if d not in targets:
-                targets.append(d)
-
     out: List[tuple] = []
     used = 0
     for rel in targets:
         if len(out) >= max_files:
             break
         full = vuln_dir / rel
+        if not full.resolve().is_relative_to(vuln_dir.resolve()) or 'test' in Path(rel).name.lower() or any(p.lower() in ('tests', 'test') for p in Path(rel).parts):
+            continue
         if not full.exists() or not full.is_file():
             continue
         try:
@@ -91,13 +88,16 @@ def call_gpt(system: str, prompt: str, model: str, temperature: Optional[float] 
     or_key = os.environ.get("OPENROUTER_API_KEY")
     base_url = os.environ.get("OPENAI_BASE_URL") or ("https://openrouter.ai/api/v1" if or_key else None)
     api_key = or_key or os.environ.get("OPENAI_API_KEY")
-    client = OpenAI(base_url=base_url, api_key=api_key) if base_url else OpenAI()
+    client = OpenAI(base_url=base_url, api_key=api_key, max_retries=0, timeout=120) if base_url else OpenAI(max_retries=0, timeout=120)
     
     timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
     t0 = time.time()
 
     kwargs = {
         "model": model,
+        "max_completion_tokens": 4096,
+        "reasoning_effort": "low",
+        "service_tier": "default",
         "response_format": {"type": "json_object"},
         "messages": [
             {"role": "system", "content": system},
@@ -115,7 +115,9 @@ def call_gpt(system: str, prompt: str, model: str, temperature: Optional[float] 
     text = resp.choices[0].message.content or ""
     usage = resp.usage
     meta = {
-        "model": model,
+        "model": getattr(resp, 'model', None) or model,
+        "requested_model": model,
+        "response_id": getattr(resp, 'id', None),
         "provider": "openrouter" if base_url and "openrouter" in base_url else "openai",
         "timestamp": timestamp,
         "latency_s": round(elapsed, 4),
@@ -144,10 +146,17 @@ def run_builtin(agent: str, model: str, vuln_id: str, case_dir: Path, out_dir: P
                 temperature: Optional[float] = None) -> int:
     meta = load_meta(case_dir)
     files = collect_context_files(case_dir, meta)
+    if not files:
+        raise ValueError('No vulnerable source context found; refusing an API request')
     user = build_user_prompt(vuln_id, meta, files)
 
-    out_dir.mkdir(parents=True, exist_ok=True)
+    # An existing directory is a frozen attempt, including failed generations.
+    out_dir.mkdir(parents=True, exist_ok=False)
     (out_dir / "prompt.txt").write_text(user, encoding="utf-8")
+    write_json(out_dir / 'request.json', {'system': SYSTEM_PROMPT, 'user': user, 'model': model, 'temperature': temperature, 'max_completion_tokens': 4096, 'reasoning_effort': 'low', 'service_tier': 'default', 'endpoint': 'chat/completions'})
+
+    request_started = time.monotonic()
+    requested_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
     try:
         if agent == "gpt":
@@ -156,28 +165,36 @@ def run_builtin(agent: str, model: str, vuln_id: str, case_dir: Path, out_dir: P
             raise NotImplementedError(f"Agent {agent} is not configured.")
     except Exception as e:
         (out_dir / "generation.json").write_text(
-            json.dumps({"agent": agent, "model": model, "error": repr(e)}, indent=2),
+            json.dumps({"status": "generation_error", "agent": agent, "model": model,
+                        "timestamp": requested_at,
+                        "latency_s": round(time.monotonic() - request_started, 4),
+                        "error": type(e).__name__, "http_status": getattr(e, 'status_code', None)}, indent=2),
             encoding="utf-8",
         )
-        print(f"[!] {vuln_id} {agent}: {e}", file=sys.stderr)
+        print(f"[!] {vuln_id} {agent}: {type(e).__name__}", file=sys.stderr)
         return 1
 
-    # Extraer respuesta estructurada en formato JSON
+    # Preserve the exact model text even if its schema is invalid.
+    (out_dir / 'llm_response.txt').write_bytes(text.encode('utf-8'))
     try:
-        payload = json.loads(text)
-        claimed_success_raw = payload.get("claimed_success", False)
-        claimed_success = 1 if bool(claimed_success_raw) else 0
-        confidence = float(payload.get("confidence", 0.0))
-        patch_content = extract_diff(str(payload.get("patch", "")))
+        if info.get('stop_reason') != 'stop':
+            raise ValueError('Response did not finish normally')
+        payload = parse_payload(text)
+        claimed_success = int(payload['claimed_success'])
+        confidence = payload['confidence']
+        patch_content = payload['patch']
     except Exception as parse_err:
-        claimed_success = 0
-        confidence = 0.0
-        patch_content = extract_diff(text)
         info["parse_error"] = str(parse_err)
+        info['status'] = 'invalid_response'
+        write_json(out_dir / 'generation.json', info)
+        return 1
 
     # Congelar salida en disco antes de la evaluación
-    (out_dir / "patch.diff").write_text(patch_content, encoding="utf-8")
+    (out_dir / "patch.diff").write_bytes(patch_content.encode('utf-8'))
     info.update({
+        "schema_version": 2,
+        "status": "generated",
+        "hashes": {name: sha256(out_dir / name) for name in ('request.json', 'llm_response.txt', 'patch.diff')},
         "agent": agent,
         "vuln_id": vuln_id,
         "claimed_success": claimed_success,
@@ -230,6 +247,12 @@ def main():
     if not targets:
         sys.exit(f"no vuln workspaces found under {args.workspaces}")
 
+    if args.agent != 'gpt':
+        sys.exit('This experiment requires the validated gpt generator')
+    # Fail before any API call if any requested attempt already exists.
+    for vid in targets:
+        if (args.runs / args.agent / vid).exists():
+            sys.exit(f'Frozen attempt exists: {vid}. Use a separate --runs directory for a NEW experiment.')
     n_ok = n_err = 0
     for vid in targets:
         case_dir = args.workspaces / vid
@@ -251,7 +274,9 @@ def main():
             n_err += 1
 
     print(f"[done] {args.agent}: ok={n_ok}, err={n_err}, total={len(targets)}")
+    return 1 if n_err else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
+

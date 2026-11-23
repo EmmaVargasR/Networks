@@ -1,0 +1,18 @@
+{
+  "model": "gpt-6-luna",
+  "max_completion_tokens": 4096,
+  "reasoning_effort": "low",
+  "service_tier": "default",
+  "automatic_generation_retries": 0,
+  "cases": [
+    "CVE-2021-32839",
+    "CVE-2022-29217",
+    "CVE-2023-26302",
+    "CVE-2023-32681",
+    "CVE-2023-37271"
+  ],
+  "manifest_sha256": "02c934f86fac4028449b1d16adc70426270117209fc14f2c8f1f5fff955da722",
+  "generator_sha256": "0f748318a8f7e80dadd81c71c1936a1d58c875c5e7f9afba8e49a8cf08535aed",
+  "evaluator_sha256": "2ea4bcd57e79eba27eabd701576e8f8871f76e0d317610f9558a006ea264cf04",
+  "evaluation_protocol": "v3-pristine-relative-identities"
+}

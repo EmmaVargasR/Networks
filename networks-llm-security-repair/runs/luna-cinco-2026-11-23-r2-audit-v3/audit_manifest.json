@@ -1,0 +1,44 @@
+{
+  "reason": "Normalize only declared checkout roots in test identities and skip reasons",
+  "original_results_preserved": true,
+  "new_generation_requests": 0,
+  "new_test_executions": 0,
+  "generations": [
+    {
+      "case": "CVE-2021-32839",
+      "original_run": "/home/ec2-user/redes-final/experimento/runs/luna-cinco-2026-11-23-r2-audit-v2/gpt/CVE-2021-32839",
+      "audit_run": "/home/ec2-user/redes-final/experimento/runs/luna-cinco-2026-11-23-r2-audit-v3/gpt/CVE-2021-32839",
+      "generation_sha256": "3dc70a9a0d74f585b2023a18a49ec9f41a2d3af84bc690beef943e28402eaa79",
+      "patch_sha256": "f680679510117076d25fe91b018e54aaa3ed2fa19945d594f506b07886b2f9ab",
+      "completed": true,
+      "verified": 0
+    },
+    {
+      "case": "CVE-2022-29217",
+      "original_run": "/home/ec2-user/redes-final/experimento/runs/luna-cinco-2026-11-23-r2-audit-v2/gpt/CVE-2022-29217",
+      "audit_run": "/home/ec2-user/redes-final/experimento/runs/luna-cinco-2026-11-23-r2-audit-v3/gpt/CVE-2022-29217",
+      "generation_sha256": "477a27939922918da49ccb85cc883835a29eaf9fd79370923967d78b8e0e6c37",
+      "patch_sha256": "17e37c95b3cf840d7369456990d5133f07308e4dbe924e02b2f550a7839624b1",
+      "completed": true,
+      "verified": 0
+    },
+    {
+      "case": "CVE-2023-26302",
+      "original_run": "/home/ec2-user/redes-final/experimento/runs/luna-cinco-2026-11-23-r2-audit-v2/gpt/CVE-2023-26302",
+      "audit_run": "/home/ec2-user/redes-final/experimento/runs/luna-cinco-2026-11-23-r2-audit-v3/gpt/CVE-2023-26302",
+      "generation_sha256": "17cd99a19b3c0712539ff609e131bcfbe43d44745ade753f6743153cfff0331b",
+      "patch_sha256": "05abb079331970eeb73669473d08ebb3e74e2f2663b30c8f773d0f13544d1fb1",
+      "completed": true,
+      "verified": 0
+    },
+    {
+      "case": "CVE-2023-32681",
+      "original_run": "/home/ec2-user/redes-final/experimento/runs/luna-cinco-2026-11-23-r2-audit-v2/gpt/CVE-2023-32681",
+      "audit_run": "/home/ec2-user/redes-final/experimento/runs/luna-cinco-2026-11-23-r2-audit-v3/gpt/CVE-2023-32681",
+      "generation_sha256": "1a50e05153e8afc5a748359f1369da85f4bbcae54b53d53823d9c823053f8ebd",
+      "patch_sha256": "b5579d07d66ff26968b057d1cc2ff4fe212d7c72a20dc74eacd0451d8e793ce8",
+      "completed": true,
+      "verified": 1
+    }
+  ]
+}
