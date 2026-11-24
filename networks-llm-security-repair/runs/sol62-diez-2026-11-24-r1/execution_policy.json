@@ -1,0 +1,28 @@
+{
+  "model": "gpt-6.2-sol",
+  "cases": [
+    "CVE-2021-32839",
+    "CVE-2022-29217",
+    "CVE-2023-26302",
+    "CVE-2023-32681",
+    "CVE-2023-37271",
+    "CVE-2025-43859",
+    "CVE-2025-46656",
+    "CVE-2023-32309",
+    "CVE-2023-34457",
+    "CVE-2022-3102"
+  ],
+  "max_completion_tokens": 4096,
+  "reasoning_effort": "low",
+  "service_tier": "default",
+  "automatic_retries": 0,
+  "protocol_sha256": "7c01334bfb22312ce8e5f85e0a6fec1a06dcb2a8b4de5c901322da056856f4fa",
+  "code_sha256": {
+    "run_agent.py": "0f748318a8f7e80dadd81c71c1936a1d58c875c5e7f9afba8e49a8cf08535aed",
+    "evaluate.py": "2ea4bcd57e79eba27eabd701576e8f8871f76e0d317610f9558a006ea264cf04",
+    "repair_common.py": "b835e0eeb3efc0b8ef259530e305d78f8abe9b2ffd166906539a0f2485621986",
+    "aggregate_results.py": "ea17826ddedacc132b1fbc731ef51318d0ce060640bf923e370ddc1b170454c3",
+    "compare_models.py": "70fff9119ca396cd24ae0d486269bf4a56449e39c659e25591949fa0f32f86d1",
+    "continuar_comparacion_sol.py": "976eab74f54ee12effdd264b8dfd8e95d126e7dabae78a5ca606bc46e0b9e24f"
+  }
+}
