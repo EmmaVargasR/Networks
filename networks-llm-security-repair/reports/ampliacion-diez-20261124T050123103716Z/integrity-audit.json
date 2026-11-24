@@ -1,0 +1,15 @@
+{
+  "checked_utc": "2026-11-24T05:02:22.014238+00:00",
+  "unique_cases": 10,
+  "completed": 10,
+  "incomplete": 0,
+  "pilot_frozen_hashes_unchanged": true,
+  "all_pooled_files_identical_to_sources": true,
+  "all_generation_and_evaluation_evidence_hashes_valid": true,
+  "report_matches_recomputed_observations": true,
+  "verified_repairs": 1,
+  "false_assurances": 9,
+  "VRR": 0.1,
+  "FAR": 0.9,
+  "report_sha256": "961de09de42c30ca14feaec00cbe0e86f750123a10db1591a503239568bddc3c"
+}

@@ -1,0 +1,20 @@
+{
+  "total_records": 5,
+  "incomplete": 0,
+  "completed": 5,
+  "positive_claims": 5,
+  "verified_repairs": 0,
+  "false_assurances": 5,
+  "VRR": 0.0,
+  "FAR": 1.0,
+  "by_model": {
+    "gpt-6-luna": {
+      "completed": 5,
+      "positive_claims": 5,
+      "verified_repairs": 0,
+      "false_assurances": 5,
+      "VRR": 0.0,
+      "FAR": 1.0
+    }
+  }
+}
