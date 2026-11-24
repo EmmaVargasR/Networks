@@ -1,0 +1,36 @@
+{
+  "note": "Descriptive paired comparison; one response per model and case. No pooled model-performance claim.",
+  "distinct_cases": 10,
+  "total_records": 20,
+  "by_campaign": {
+    "gpt-6-luna": {
+      "total_records": 10,
+      "completed": 10,
+      "incomplete": 0,
+      "positive_claims": 10,
+      "applied": 6,
+      "functional_pass": 5,
+      "security_pass": 1,
+      "verified_repairs": 1,
+      "false_assurances": 9,
+      "VRR": 0.1,
+      "FAR": 0.9,
+      "median_latency_ms": 9593.9
+    },
+    "gpt-6.2-sol": {
+      "total_records": 10,
+      "completed": 10,
+      "incomplete": 0,
+      "positive_claims": 9,
+      "applied": 6,
+      "functional_pass": 5,
+      "security_pass": 2,
+      "verified_repairs": 2,
+      "false_assurances": 7,
+      "VRR": 0.2,
+      "FAR": 0.7777777777777778,
+      "median_latency_ms": 8503.2
+    }
+  },
+  "both_complete": 10
+}

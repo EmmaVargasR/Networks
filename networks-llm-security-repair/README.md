@@ -2,9 +2,32 @@
 
 Individual project by Emma Vargas. [Project directory on GitHub](https://github.com/EmmaVargasR/Networks/tree/main/networks-llm-security-repair).
 
-The experiment evaluated **10 vulnerabilities from 10 projects using GPT-6 Luna, with one response per case**. All ten observations are complete: the model claimed success in every case, but only one repair passed the verification protocol. **VRR = 1/10 = 10%; FAR = 9/10 = 90%.** These are descriptive results for this compatible sample, not a general estimate of model performance.
+The experiment compares **GPT-6 Luna and GPT-6.2 Sol on the same 10 vulnerabilities from 10 projects**, with one response per model and case: **20 complete observations**. The system/user prompts, source context, generation limits, and evaluator are identical; only the requested model differs. Luna achieves **VRR = 10% and FAR = 90%**; Sol achieves **VRR = 20% and FAR = 77.78%**. These are descriptive results for this compatible sample, not a general ranking of the models.
 
-## Results
+## Model Comparison
+
+| Measurement | GPT-6 Luna | GPT-6.2 Sol |
+|---|---:|---:|
+| Completed / incomplete observations | 10 / 0 | 10 / 0 |
+| Positive success claims | 10 | 9 |
+| Applicable patches | 6 | 6 |
+| Functional checks passed | 5 | 5 |
+| Security checks passed | 1 | 2 |
+| Verified repairs | 1 | 2 |
+| False assurances | 9 | 7 |
+| **VRR** | **1/10 = 10%** | **2/10 = 20%** |
+| **FAR** | **9/10 = 90%** | **7/9 = 77.78%** |
+| Median end-to-end API latency | 9,593.9 ms | 8,503.2 ms |
+
+Sol verified sqlparse and Requests; Luna verified Requests. Both models produced four patches that were rejected during application. For these rejected patches, functional and security tests were not run; F=S=0 follows the declared verification convention.
+
+Sol's jwcrypto response has `claimed_success=0` and `confidence=0.91`. Its patch applied but failed functional and security checks. It is an unsuccessful repair, but **not a false assurance**, because the model did not claim success. This is why Sol's FAR denominator is nine positive claims, rather than ten attempts. Confidence remains a subjective response field; it is not used to override the binary claim.
+
+Sol has a 10-percentage-point higher VRR and a 12.22-percentage-point lower FAR in this run. The VRR change corresponds to one additional verified case. FAR also reflects the different numbers of success claims. These observations do not establish statistical significance, general superiority, or stable latency differences.
+
+Detailed paired outcomes, confidence, application, functionality, security, and notes are in [`paired_cases.csv`](reports/luna-vs-sol62-20261124T164840360380Z/paired_cases.csv). The [comparison results](reports/luna-vs-sol62-20261124T164840360380Z/results.csv) contain twenty rows, identified by campaign and CVE; the [summary](reports/luna-vs-sol62-20261124T164840360380Z/summary.json) reports each model separately.
+
+## Original GPT-6 Luna Results (Preserved)
 
 | Group | Completed cases | Success claims | Verified repairs | False assurances | VRR | FAR |
 |---|---:|---:|---:|---:|---:|---:|
@@ -38,11 +61,13 @@ Vulnerable code -> OpenAI API -> claim + confidence + patch.diff
 
 The model receives a fixed prompt containing the CVE identifier, repository, and up to four vulnerable source files, with a maximum of 60,000 characters. File localization comes from the benchmark's `new_code_files`: this is targeted repair with supplied files, not autonomous vulnerability detection. The model does not receive tests, the official patch, or verification results. Human inspection of tests to resolve environment issues is not included in the prompt.
 
-The implementation uses the OpenAI Chat Completions API with `gpt-6-luna`, JSON output, `reasoning_effort=low`, `max_completion_tokens=4096`, `service_tier=default`, `max_retries=0`, and a 120-second timeout. Confidence is subjective and uncalibrated. Each valid response is frozen before evaluation and is not replaced because it fails. Historical authentication errors are retained outside these ten observations and are not counted as repairs.
+The implementation uses the OpenAI Chat Completions API with `gpt-6-luna` and `gpt-6.2-sol`, JSON output, `reasoning_effort=low`, `max_completion_tokens=4096`, `service_tier=default`, `max_retries=0`, and a 120-second timeout. Confidence is subjective and uncalibrated. Each valid response is frozen before evaluation and is not replaced because it fails. Historical authentication errors are retained outside these twenty final observations and are not counted as repairs.
 
 The extension was declared after observing the pilot. An ordered list of candidates and reserves was established, and the five new cases were selected before requesting their patches. Flask-CORS (CVE-2024-6844) was excluded because a functional test also fails on the reference fix. Remarshal (CVE-2023-47163) was excluded before scanning because its test involves massive YAML alias expansion on a 1 GiB instance. MechanicalSoup and jwcrypto were the next eligible reserves. Asteval was not needed. Cases were not selected based on repair success.
 
 `docs/ampliacion-diez-2026-11-23/` preserves the original protocol, final selection, and hashes. `docs/evidencias-ampliacion/` records dependency adjustments, baselines, and exclusions. Only dependencies and test-collection arguments were adjusted; application code and tests were not manually edited to obtain valid baselines. For MechanicalSoup, `--cache-clear` was added to both suites so that Flake8 would not skip checks based on its cache.
+
+The second-model protocol was registered after observing Luna's results, but before any Sol generation. It preserves the same ten cases and exact prompts, without tuning them based on verification feedback. `docs/comparacion-luna-sol62-2026-11-24/protocolo.json` records the declared settings and Luna artifact hashes. `continuar_comparacion_sol.py` runs cases sequentially, never regenerates frozen attempts, and verifies the inventory of all 222 files in the original EC2 Luna consolidated campaign before and after execution. The comparison's `integrity_audit.json` confirms those files remained unchanged.
 
 ## How Vul4Py Verifies Patches
 
@@ -55,8 +80,16 @@ For each complete observation: `V = A × F × S` and `FA = C × (1 − V)`. A de
 ## Included Files
 
 ```text
-results.csv                         # ten distinct cases
-results.summary.json
+results.csv                         # original ten-case Luna results, unchanged
+results.summary.json                # original Luna summary, unchanged
+reports/luna-vs-sol62-20261124T164840360380Z/
+  luna.csv / sol62.csv
+  results.csv                       # twenty model-case observations
+  paired_cases.csv                  # ten paired case comparisons
+  summary.json / source_hashes.json / integrity_audit.json
+runs/sol62-diez-2026-11-24-r1/
+  execution_policy.json / luna_integrity_before.json
+  gpt/<CVE>/                        # frozen Sol responses and evaluation evidence
 submission_manifest.json            # SHA-256 package inventory
 reports/ampliacion-diez-20261124T050123103716Z/
   cinco-originales.csv / cinco-originales.summary.json
@@ -71,6 +104,7 @@ scripts/                            # generation, evaluation, metrics, and audit
 tests/test_integrity.py
 docs/ampliacion-diez-2026-11-23/
 docs/evidencias-ampliacion/
+docs/comparacion-luna-sol62-2026-11-24/
 runs/luna-cinco-2026-11-23-r2-audit-v3/     # unchanged original pilot
 runs/luna-ampliacion-cinco-2026-11-23-r1/  # five new responses
 runs/diez-consolidados-20261124T050123103716Z/
@@ -86,7 +120,7 @@ runs/diez-consolidados-20261124T050123103716Z/
     evaluation_evidence/
 ```
 
-`llm_response.json` is a byte-for-byte copy of the original JSON stored in `llm_response.txt`. `generation.json` records the model, timestamp, tokens, latency, claim, confidence, and hashes. The three campaign directories do not represent twenty attempts: the consolidated directory copies the same ten observations and records their provenance. Evidence files are preserved without line-ending conversion to maintain their hashes.
+`llm_response.json` is a byte-for-byte copy of the original JSON stored in `llm_response.txt`. `generation.json` records the model, timestamp, tokens, latency, claim, confidence, and hashes. The original Luna consolidated directory copies the same ten Luna observations and records their provenance; these copies are not additional repetitions. Sol adds ten independent model-case observations. The experiment therefore contains ten distinct vulnerabilities and twenty observations, not thirty. Root-level `results.csv` and `results.summary.json`, all earlier reports, and all Luna run directories remain unchanged; the twenty-row comparison is stored separately under `reports/luna-vs-sol62-20261124T164840360380Z/`. Evidence files are preserved without line-ending conversion to maintain their hashes.
 
 ## Fresh Installation
 
@@ -146,9 +180,9 @@ python experimento/scripts/evaluate.py --agent gpt \
   --runs ~/redes-final/experimento/runs/nueva-campana --timeout 1800
 ```
 
-The helpers `continuar_piloto.py` and `continuar_ampliacion.py` document the specific campaigns executed on EC2 and expect their original paths and manifests. For another experiment, use the generic commands above; do not restart a frozen campaign.
+The helpers `continuar_piloto.py`, `continuar_ampliacion.py`, and `continuar_comparacion_sol.py` document the specific campaigns executed on EC2 and expect their original paths and manifests. For another experiment, use the generic commands above; do not restart a frozen campaign.
 
-## Recalculate the Ten Results Without the API
+## Recalculate the Original Luna Results Without the API
 
 ```bash
 python experimento/scripts/aggregate_results.py --agent gpt \
@@ -158,16 +192,39 @@ python experimento/scripts/aggregate_results.py --agent gpt \
 
 No key or model call is required. The aggregator validates hashes, evidence, and indicators and creates reports exclusively; choose another filename if one already exists. `integrity-audit.json` confirms that the pilot files remain unchanged and that consolidated copies match their sources. `docs/piloto-cinco-submission_manifest.json` preserves the pilot's historical inventory.
 
+## Recalculate the Paired Comparison Without the API
+
+From `~/redes-final`, with this project copied to `experimento/`:
+
+```bash
+python - <<'PYCOMPARE'
+import json
+import sys
+from pathlib import Path
+sys.path.insert(0, 'experimento/scripts')
+from compare_models import compare
+plan = json.loads(Path('experimento/docs/comparacion-luna-sol62-2026-11-24/protocolo.json').read_text())
+compare(
+    plan['cases_in_order'],
+    Path('experimento/runs/diez-consolidados-20261124T050123103716Z'),
+    Path('experimento/runs/sol62-diez-2026-11-24-r1'),
+    Path('experimento/reports/comparison-recalculation-new'),
+)
+PYCOMPARE
+```
+
+This audits frozen evidence and writes new reports without an API key or model calls. Choose a different output directory if it already exists. The checked-in comparison reports remain unchanged.
+
 ## Development, Auditing, and Limitations
 
 The history retains the original commits for the API client, latency measurement, structured responses, Vul4Py integration, and metrics. The extension adds the prospective protocol, environment adjustments, runner, and documented results. The history was neither rewritten nor fabricated.
 
-The initial evaluator inherited tests updated by scanning, producing false functional failures. This was corrected by using clean commits; later, only known checkout-path prefixes in Requests test identities were normalized. The final pilot preserves the same five patches: four observations were reclassified from frozen JUnit reports from clean candidates, and RestrictedPython ran with the final evaluator. The extension uses that final evaluator. Earlier revisions and errors remain on EC2 outside the ten final observations. There are 26 automated tests without external calls for the integrity checks.
+The initial evaluator inherited tests updated by scanning, producing false functional failures. This was corrected by using clean commits; later, only known checkout-path prefixes in Requests test identities were normalized. The final pilot preserves the same five patches: four observations were reclassified from frozen JUnit reports from clean candidates, and RestrictedPython ran with the final evaluator. The extension uses that final evaluator. Earlier revisions and errors remain on EC2 outside the twenty final observations. There are 30 automated tests without external calls, including paired-case alignment, incomplete-record handling, and the FAR denominator.
 
-Selection based on compatibility and resources introduces bias; ten cases with one attempt each do not support estimating variability or comparing models. The pilot and extension are reported separately because the extension was designed after observing the pilot. The sqlparse timing threshold depends on instance load. Literal responses are measured without repairing diffs: format failures are a different outcome category from semantic security failures. FAR=90% is not claimed to generalize, and passing tests does not guarantee absolute security.
+Selection based on compatibility and resources introduces bias. Ten paired cases with one response per model support a descriptive comparison, but do not establish run-to-run variability or population-level model superiority. The original Luna pilot and extension remain separately reported because the extension was designed after observing the pilot. The Sol comparison was designed after observing Luna; this chronology is disclosed rather than presented as a study planned before either model was tested. The sqlparse timing threshold depends on instance load. Literal responses are measured without repairing diffs: format failures are a different outcome category from semantic security failures. FAR=90% is not claimed to generalize, and passing tests does not guarantee absolute security.
 
 ## What Happens Over the Network
 
 The controller runs on EC2. The client may resolve `api.openai.com` through DNS, establish a TCP connection protected by TLS, and send HTTPS to `/v1/chat/completions`. The key travels as an authorization credential; the JSON body contains instructions and selected code. OpenAI returns the text and usage data, which are stored before verification. The client may reuse connections, so a new handshake is not assumed for every request.
 
-Vul4Py runs tests on EC2; Requests and MechanicalSoup use local HTTP/HTTPS test servers. GitHub/PyPI provide repositories and dependencies; these steps are not model calls. Recorded latency measures the SDK call, not DNS/TCP/TLS or inference separately. No packets were captured. The ten attempts record **47,096 input tokens and 7,544 output tokens, totaling 54,640**; this usage is not a complete account billing statement.
+Vul4Py runs tests on EC2; Requests and MechanicalSoup use local HTTP/HTTPS test servers. GitHub/PyPI provide repositories and dependencies; these steps are not model calls. Recorded latency measures the SDK call, not DNS/TCP/TLS or inference separately. No packets were captured. Luna records **47,096 input tokens and 7,544 output tokens (54,640 total)**. Sol records **47,096 input tokens and 4,187 output tokens (51,283 total)**. Combined usage is **94,192 input tokens and 11,731 output tokens (105,923 total)**. These counts are not a complete account billing statement.

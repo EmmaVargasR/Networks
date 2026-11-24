@@ -1,0 +1,13 @@
+{
+  "checked_utc": "2026-11-24T17:12:17.487944+00:00",
+  "base_main_commit": "fc1fe28364c326e04bdd4e775ec870c00d97b554",
+  "existing_results_csv_and_summary_unchanged": true,
+  "all_existing_run_and_report_files_unchanged": true,
+  "only_modified_existing_files": [
+    "README.md",
+    "submission_manifest.json"
+  ],
+  "new_comparison_reproduced_without_api_calls": true,
+  "comparison_records": 20,
+  "credential_scan": "No matching API keys, AWS access keys, private key blocks, .env, .pem or .key files"
+}
