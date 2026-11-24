@@ -769,6 +769,10 @@
     "scripts/registrar_referencia_ampliacion.py": "564c05ba8914151c33e2c651ca663600e881317da9affe0fe8b29311dd3b8265",
     "scripts/repair_common.py": "b835e0eeb3efc0b8ef259530e305d78f8abe9b2ffd166906539a0f2485621986",
     "scripts/run_agent.py": "0f748318a8f7e80dadd81c71c1936a1d58c875c5e7f9afba8e49a8cf08535aed",
-    "tests/test_integrity.py": "10739c0c38f9fc4d1d59ef14290122e6c53bb2321c12c8bd0ded4762a72e0743"
+    "tests/test_integrity.py": "10739c0c38f9fc4d1d59ef14290122e6c53bb2321c12c8bd0ded4762a72e0743",
+    "scripts/compare_models.py": "70fff9119ca396cd24ae0d486269bf4a56449e39c659e25591949fa0f32f86d1",
+    "scripts/continuar_comparacion_sol.py": "976eab74f54ee12effdd264b8dfd8e95d126e7dabae78a5ca606bc46e0b9e24f",
+    "tests/test_model_comparison.py": "12fa126449b78801f835eab8148ea2c37cb4daef73577a54b4be011d4681cba5",
+    "docs/comparacion-luna-sol62-2026-11-24/protocolo.json": "7c01334bfb22312ce8e5f85e0a6fec1a06dcb2a8b4de5c901322da056856f4fa"
   }
 }

@@ -1,0 +1,304 @@
+{
+  "created_utc": "2026-11-24T16:11:33.808305+00:00",
+  "status": "protocol registered before second-model generations; model access and remaining balance not yet confirmed",
+  "model": "gpt-6.2-sol",
+  "reference_model": "gpt-6-luna",
+  "cases_in_order": [
+    "CVE-2021-32839",
+    "CVE-2022-29217",
+    "CVE-2023-26302",
+    "CVE-2023-32681",
+    "CVE-2023-37271",
+    "CVE-2025-43859",
+    "CVE-2025-46656",
+    "CVE-2023-32309",
+    "CVE-2023-34457",
+    "CVE-2022-3102"
+  ],
+  "new_attempts": 10,
+  "preserved_luna_attempts": 10,
+  "runs_per_model_case": 1,
+  "reasoning_effort": "low",
+  "max_completion_tokens": 4096,
+  "service_tier": "default",
+  "automatic_retries": 0,
+  "api": "chat/completions",
+  "same_system_and_user_prompts": true,
+  "no_tools_or_verification_feedback": true,
+  "manual_patch_edits": false,
+  "campaign_name": "sol62-diez-2026-11-24-r1",
+  "benchmark_commit": "f80f861012cb7b7cfeca7323be51d33e72eaf8f3",
+  "existing_luna_campaign": "experimento/runs/diez-consolidados-20261124T050123103716Z",
+  "generation_requests_started": 0,
+  "standard_prices_usd_per_million_tokens": {
+    "input": 2.0,
+    "output": 10.0,
+    "source": "https://developers.openai.com/api/docs/models/gpt-6.2-sol",
+    "checked_date": "2026-11-24"
+  },
+  "cost_estimate": {
+    "using_luna_token_counts_usd": 0.169632,
+    "using_luna_input_and_full_output_caps_usd": 0.503792,
+    "suggested_api_reserve_usd": 1,
+    "note": "Estimates, not guarantees; input tokenization and output usage can differ. AWS costs excluded."
+  },
+  "records": {
+    "CVE-2021-32839": {
+      "frozen_luna_files": {
+        "request.json": "1987014c36440a2ab4af38337c1157d32172bd36ac78f9dc5d5a606385f5d68a",
+        "llm_response.txt": "b66f5603625d1072d3c5737e63dee6de004dee8420850988d7b54af8a2c7842c",
+        "patch.diff": "f680679510117076d25fe91b018e54aaa3ed2fa19945d594f506b07886b2f9ab",
+        "generation.json": "3dc70a9a0d74f585b2023a18a49ec9f41a2d3af84bc690beef943e28402eaa79",
+        "eval.json": "953e5b3f6d453133f1c061c0a82ae48ff40a54935fbcbd73121ef9a06e6911c1"
+      },
+      "meta_sha256": "19dd46b5738090e3f4d9cc10ca3c24806aca6e010837f92b1a80ba03d1c98bc9",
+      "prompt_identical_to_luna": true,
+      "reference_counts": {
+        "functional": {
+          "passed": 415,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 3
+        },
+        "exploit": {
+          "passed": 59,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 2
+        }
+      }
+    },
+    "CVE-2022-29217": {
+      "frozen_luna_files": {
+        "request.json": "3f5a390d0ebed1de4bd1104e9905c87f011374413cff4fe40f8a43b0f0a92d09",
+        "llm_response.txt": "d48a8178d40cc64cb25ea78b13c4438c3f5c3a5dca25361d94ee9aadbb80b198",
+        "patch.diff": "17e37c95b3cf840d7369456990d5133f07308e4dbe924e02b2f550a7839624b1",
+        "generation.json": "477a27939922918da49ccb85cc883835a29eaf9fd79370923967d78b8e0e6c37",
+        "eval.json": "44b54a80fed61190189c1d9018db2f23964699db148c7b86fb80b11f720661fd"
+      },
+      "meta_sha256": "3cd6595ec3e2c08069a569023f0164a476f26d30a3b2a8a6a0f749e19d3039d9",
+      "prompt_identical_to_luna": true,
+      "reference_counts": {
+        "functional": {
+          "passed": 216,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 2
+        },
+        "exploit": {
+          "passed": 65,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "CVE-2023-26302": {
+      "frozen_luna_files": {
+        "request.json": "d1310ada6d0b3af39e17fcd4ea4660748fd7f09ab2d8c13695b1b88cb3e6e189",
+        "llm_response.txt": "4a531e46e683462f6d50d0ccdd89495ff1bdf1b496b9337635915400d3678a0c",
+        "patch.diff": "05abb079331970eeb73669473d08ebb3e74e2f2663b30c8f773d0f13544d1fb1",
+        "generation.json": "17cd99a19b3c0712539ff609e131bcfbe43d44745ade753f6743153cfff0331b",
+        "eval.json": "ee0627df57352addc6814d113ce82eafcea29aee0bec3510c664451523803582"
+      },
+      "meta_sha256": "e838b2e015ba84b2b270b3b3b2e0af258e12616572c8f11977083bc0d7a51471",
+      "prompt_identical_to_luna": true,
+      "reference_counts": {
+        "functional": {
+          "passed": 871,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exploit": {
+          "passed": 5,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "CVE-2023-32681": {
+      "frozen_luna_files": {
+        "request.json": "3137a7d4a0494283f3719745863b5d3f4f012e3f5f0e454a9574851f5ae9de80",
+        "llm_response.txt": "be0ce6509241d591b2b90d664c4379443c4e5a50c41321fc6b59757720723c65",
+        "patch.diff": "b5579d07d66ff26968b057d1cc2ff4fe212d7c72a20dc74eacd0451d8e793ce8",
+        "generation.json": "1a50e05153e8afc5a748359f1369da85f4bbcae54b53d53823d9c823053f8ebd",
+        "eval.json": "b8f2ca37a52b1ef60977a68fb3ffd24ada46c0a4260643bd007930ac7aefdb38"
+      },
+      "meta_sha256": "48b449c9f4924393dafcb6ca0b5cd0a75b58957e60a49414164b9a4ac691404a",
+      "prompt_identical_to_luna": true,
+      "reference_counts": {
+        "functional": {
+          "passed": 580,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 14
+        },
+        "exploit": {
+          "passed": 320,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 1
+        }
+      }
+    },
+    "CVE-2023-37271": {
+      "frozen_luna_files": {
+        "request.json": "45bd1ef64c1cfaa311535011e065cad5e030bb80f458355b3c961ff2c5fc4bc3",
+        "llm_response.txt": "1927740f86f7bd68ceecacfb8dad958ebd26eab3230b44db3f70e5c62aee8cec",
+        "patch.diff": "07f1a0c095cfc50980aa62e58c4bd0a80dffcc7af8353e1d9c482270dae36e37",
+        "generation.json": "147230a3c438c9b1ec299790e591aade5b0e29aae4836f2105917f29b5a23a44",
+        "eval.json": "4953e32d4d5baa36cc67982ee0bf51da61b61cc9b670c8be74977c3610a0f5e9"
+      },
+      "meta_sha256": "5ba393fdf15d633b6f1a50665b7d0433010cc0c9e518f2752ca502606c8ef249",
+      "prompt_identical_to_luna": true,
+      "reference_counts": {
+        "functional": {
+          "passed": 271,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 1
+        },
+        "exploit": {
+          "passed": 3,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "CVE-2025-43859": {
+      "frozen_luna_files": {
+        "request.json": "600b3a9f1d88ba3530a2ed53fc1a05326fb657ef068e27c14fba95a1f1a21d2d",
+        "llm_response.txt": "2d3ecd46049ceb82bb7bad2e09ce74b5a4acddfb172263702d1539e2d40bdade",
+        "patch.diff": "b97f925010aa8f4ea1c67290485963f440a780c3d210785183dd24dd5151a1fa",
+        "generation.json": "137012feca78f849af4f07ec13f66fba6e8ef75e9d25e07290f15a13a4c52287",
+        "eval.json": "9cee7711ed6b6e707aaa88cb11bc4ce9662bef096cc952efaceb45ea83bcd6eb"
+      },
+      "meta_sha256": "11cf67875689a308ef028a0a612f9027b2cd2ed32657971133a38844c88a8bf6",
+      "prompt_identical_to_luna": true,
+      "reference_counts": {
+        "functional": {
+          "passed": 78,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exploit": {
+          "passed": 17,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "CVE-2025-46656": {
+      "frozen_luna_files": {
+        "request.json": "93b7ac17f92c7122444a736b1f6344f72d49e6117fb523b7d6f129c8387f3a80",
+        "llm_response.txt": "0ad76e21878c9be0dada17c77d433299e0e9889b5ec3c6cd88d95f7cf15a8d98",
+        "patch.diff": "2593ac6a26f83dc1a79fe9f68cbe02206773b30547a6e1e3b2d5954ee5c603b9",
+        "generation.json": "3a1dd302bef6330889191aeb33e415ccff1a1381dada7cee055f020a2e80cdd8",
+        "eval.json": "b2b6693aec3514deef340d0349cf11833d78aa311dd9b6e4596086a8b2eff7ec"
+      },
+      "meta_sha256": "883d0e0fb9eb9dc8ebcc79fb00de21bb782fa582dcc57533110d9ce81038ccb7",
+      "prompt_identical_to_luna": true,
+      "reference_counts": {
+        "functional": {
+          "passed": 75,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exploit": {
+          "passed": 45,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "CVE-2023-32309": {
+      "frozen_luna_files": {
+        "request.json": "64b419748c1773a6e86b1e26bac1dec93829b5c71b72ecd2580b9a1fd4d13649",
+        "llm_response.txt": "6184ed334053542c9a62b427d183d79670022bca846be918df839e80213017a5",
+        "patch.diff": "7807b46df0666b85794a1baa59a9c66c53f539ba83cae9e376b05412e1688e42",
+        "generation.json": "85d0418b74d8190397206371768cfde35ecd6fa77a658035a8ce844d87748c37",
+        "eval.json": "d58383e58b9d1e5d39c10fd81f7d871ae14db1b6f43df6b09779d6ce29b74223"
+      },
+      "meta_sha256": "3340f5de31a6bbb546da3c14e5072101b7f3c3fc184404accebb4d7878a871d8",
+      "prompt_identical_to_luna": true,
+      "reference_counts": {
+        "functional": {
+          "passed": 473,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exploit": {
+          "passed": 46,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "CVE-2023-34457": {
+      "frozen_luna_files": {
+        "request.json": "b242a0e4690bb3d14bd0309428fa3287e64aa80e50dcb0bcd615ba6687eb745e",
+        "llm_response.txt": "400e924fe02b4bde0871cb05b3a625ce6689ccdeccb05a6612f7b7d9c36aeff7",
+        "patch.diff": "5a6d619b04b1a17c63a3cd28444adf281ab8342faa95bf95c8ced75231b227bc",
+        "generation.json": "2c5f024fd8c999179ac204fcf2053a4d8705e52d0f54ec5218d8339032d69266",
+        "eval.json": "f76275d82787fa7b7f04e72d6f344d5faebdf67d552803695cb643e64319b997"
+      },
+      "meta_sha256": "38812d1b36381fcb2a1afa79bff47333effd6cea5072cd845dc7ed9fa462f3ec",
+      "prompt_identical_to_luna": true,
+      "reference_counts": {
+        "functional": {
+          "passed": 124,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exploit": {
+          "passed": 88,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "CVE-2022-3102": {
+      "frozen_luna_files": {
+        "request.json": "7ed579bbe463b6d457f4f4f9c3031ad74e40eea17da08a7c2e63630747b45179",
+        "llm_response.txt": "0f9f7540d232d34533b60306e95cff500f2cdd49a4c7adaa571cc7520d559bdd",
+        "patch.diff": "469f2619538fa1e97ae03a9ac45dd4f6c5134b4bc8ca0085d5e0e4fd3dd65b04",
+        "generation.json": "33e25d812f97fc628f4512b77627716364193510c85ffb978f8a331c34e2ca45",
+        "eval.json": "4d0462ade689960145b60651a15eedc24fa28ac7b3e1ee773488fca23ad16155"
+      },
+      "meta_sha256": "e683971f7e9a73dd727b27cd992184887b3e34c77b6ef3f58417830ae7c358bd",
+      "prompt_identical_to_luna": true,
+      "reference_counts": {
+        "functional": {
+          "passed": 117,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exploit": {
+          "passed": 99,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    }
+  },
+  "analysis": [
+    "Paired descriptive comparison on the same ten cases.",
+    "Report applicability, functionality, security, VRR, FAR, confidence, latency and token usage by model.",
+    "Separate malformed patches from applied patches that fail tests.",
+    "Retain unsuccessful and incomplete attempts; no outcome-based selection.",
+    "Do not claim general model superiority from ten cases and one response each."
+  ]
+}
