@@ -1,0 +1,2 @@
+vuln_id,repo_url,fix_commit
+CVE-2022-3102,https://github.com/latchset/jwcrypto,f4e912f83cb578e2cd47f8a9398bf15f680bf558

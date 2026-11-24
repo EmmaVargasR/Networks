@@ -1,0 +1,23 @@
+{
+  "model": "gpt-6-luna",
+  "cases": [
+    "CVE-2025-43859",
+    "CVE-2025-46656",
+    "CVE-2023-32309",
+    "CVE-2023-34457",
+    "CVE-2022-3102"
+  ],
+  "preserved_pilot": "luna-cinco-2026-11-23-r2-audit-v3",
+  "max_completion_tokens": 4096,
+  "reasoning_effort": "low",
+  "service_tier": "default",
+  "automatic_generation_retries": 0,
+  "selection_sha256": "20d65d6c8d4be3546b83cc6ba15a91eb9c1f2c03384fd04bc061cf476f57c892",
+  "code_sha256": {
+    "run_agent.py": "0f748318a8f7e80dadd81c71c1936a1d58c875c5e7f9afba8e49a8cf08535aed",
+    "evaluate.py": "2ea4bcd57e79eba27eabd701576e8f8871f76e0d317610f9558a006ea264cf04",
+    "repair_common.py": "b835e0eeb3efc0b8ef259530e305d78f8abe9b2ffd166906539a0f2485621986",
+    "aggregate_results.py": "ea17826ddedacc132b1fbc731ef51318d0ce060640bf923e370ddc1b170454c3",
+    "continuar_ampliacion.py": "ce15fa649162bbe3ffdd5a02619ff06a49f759e5bee13e4f611884fd1dfafc61"
+  }
+}

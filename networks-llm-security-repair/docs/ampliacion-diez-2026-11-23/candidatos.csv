@@ -1,0 +1,6 @@
+vuln_id,repo_url,fix_commit
+CVE-2025-43859,https://github.com/python-hyper/h11,114803a29ce50116dc47951c690ad4892b1a36ed
+CVE-2024-6844,https://github.com/corydolphin/flask-cors,35d875319621bd129a38b2b823abf4a2f6cda536
+CVE-2025-46656,https://github.com/matthewwithanm/python-markdownify,959561879693bf4a576f99c6733b50b01186aa08
+CVE-2023-47163,https://github.com/remarshal-project/remarshal,fd6ac799a02f533c3fc243b49cdd6d21aa7ee494
+CVE-2023-32309,https://github.com/facelessuser/pymdown-extensions,b7bb4878d6017c03c8dc97c42d8d3bb6ee81db9d

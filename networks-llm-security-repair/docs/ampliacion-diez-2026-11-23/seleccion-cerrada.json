@@ -1,0 +1,118 @@
+{
+  "selection_closed_utc": "2026-11-24T02:02:01.903170+00:00",
+  "preserved_pilot_cases": [
+    "CVE-2021-32839",
+    "CVE-2022-29217",
+    "CVE-2023-26302",
+    "CVE-2023-32681",
+    "CVE-2023-37271"
+  ],
+  "selected_new_cases": [
+    "CVE-2025-43859",
+    "CVE-2025-46656",
+    "CVE-2023-32309",
+    "CVE-2023-34457",
+    "CVE-2022-3102"
+  ],
+  "selected_before_model_calls": true,
+  "new_model_calls": 0,
+  "model": "gpt-6-luna",
+  "pilot_hashes_unchanged": true,
+  "references": {
+    "CVE-2025-43859": {
+      "snapshot": "evidencias/ampliacion/CVE-2025-43859/validado-20261124T020106385493Z",
+      "meta_sha256": "11cf67875689a308ef028a0a612f9027b2cd2ed32657971133a38844c88a8bf6",
+      "reference_counts": {
+        "functional": {
+          "passed": 78,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exploit": {
+          "passed": 17,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "CVE-2025-46656": {
+      "snapshot": "evidencias/ampliacion/CVE-2025-46656/validado-20261123T174520507948Z",
+      "meta_sha256": "883d0e0fb9eb9dc8ebcc79fb00de21bb782fa582dcc57533110d9ce81038ccb7",
+      "reference_counts": {
+        "functional": {
+          "passed": 75,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exploit": {
+          "passed": 45,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "CVE-2023-32309": {
+      "snapshot": "evidencias/ampliacion/CVE-2023-32309/validado-20261123T174841716043Z",
+      "meta_sha256": "3340f5de31a6bbb546da3c14e5072101b7f3c3fc184404accebb4d7878a871d8",
+      "reference_counts": {
+        "functional": {
+          "passed": 473,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exploit": {
+          "passed": 46,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "CVE-2023-34457": {
+      "snapshot": "evidencias/ampliacion/CVE-2023-34457/validado-20261124T015912687293Z",
+      "meta_sha256": "38812d1b36381fcb2a1afa79bff47333effd6cea5072cd845dc7ed9fa462f3ec",
+      "reference_counts": {
+        "functional": {
+          "passed": 124,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exploit": {
+          "passed": 88,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "CVE-2022-3102": {
+      "snapshot": "evidencias/ampliacion/CVE-2022-3102/validado-20261124T020125445945Z",
+      "meta_sha256": "e683971f7e9a73dd727b27cd992184887b3e34c77b6ef3f58417830ae7c358bd",
+      "reference_counts": {
+        "functional": {
+          "passed": 117,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "exploit": {
+          "passed": 99,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    }
+  },
+  "csv_sha256": {
+    "cinco-nuevos.csv": "aa71131080f5300bfbb3adac3a96ba349d9c217ed0250fce165538e634c2ab51",
+    "diez-casos.csv": "3ac680537ca0e98cf373c908e9e23e668a5c62be47062b71de5613ccccf743ad"
+  },
+  "remaining_work": "Generate once and evaluate each of five new cases; aggregate original five and new five separately and pooled."
+}

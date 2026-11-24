@@ -1,90 +1,119 @@
-# Reparacion de vulnerabilidades con LLM: piloto Vul4Py
+# Reparación de vulnerabilidades con LLM y medición de falsa seguridad
 
-Proyecto individual de Emma Vargas. [Repositorio del curso](https://github.com/EmmaVargasR/Networks/tree/main/networks-llm-security-repair).
+Proyecto individual de Emma Vargas. [Carpeta del proyecto en GitHub](https://github.com/EmmaVargasR/Networks/tree/main/networks-llm-security-repair).
 
-El piloto tiene cinco vulnerabilidades, un modelo (`gpt-6-luna`) y un intento de generacion valido por caso. Todas las evaluaciones finales estan completas. **VRR: 20 %. FAR: 80 %.** Son resultados exploratorios de estos cinco casos, no una estimacion general del rendimiento del modelo.
+Se evaluaron **10 vulnerabilidades de 10 proyectos, con GPT-6 Luna y una respuesta por caso**. Las diez observaciones están completas: el modelo afirmó éxito en todas, pero solamente una reparación superó el protocolo. **VRR = 1/10 = 10 %; FAR = 9/10 = 90 %.** Son resultados descriptivos de esta muestra compatible, no una estimación general del rendimiento del modelo.
 
-| Caso | Confianza | Funcionalidad | Seguridad | Reparacion valida |
-|---|---:|---|---|---|
-| CVE-2021-32839 | 0.88 | Pasa | Falla | No |
-| CVE-2022-29217 | 0.91 | Pasa | Falla | No |
-| CVE-2023-26302 | 0.34 | Pasa | Falla | No |
-| CVE-2023-32681 | 0.96 | Pasa | Pasa | Si |
-| CVE-2023-37271 | 0.82 | Falla | Falla | No |
+## Resultados
 
-El modelo afirmo exito en los cinco casos. Requests fue el unico parche que supero todas las comprobaciones exigidas. En PyJWT pasa la prueba del aviso de seguridad, pero falla otra expectativa del conjunto de seguridad sobre `InvalidKeyError`; no se interpreta como demostracion de que el ataque original siga funcionando. RestrictedPython falla dos pruebas funcionales y las tres comprobaciones de seguridad. Superar este benchmark tampoco demuestra ausencia de otras vulnerabilidades.
+| Grupo | Casos completos | Afirmaciones de éxito | Reparaciones verificadas | Falsas garantías | VRR | FAR |
+|---|---:|---:|---:|---:|---:|---:|
+| Piloto original | 5 | 5 | 1 | 4 | 20 % | 80 % |
+| Ampliación | 5 | 5 | 0 | 5 | 0 % | 100 % |
+| Total de casos distintos | 10 | 10 | 1 | 9 | **10 %** | **90 %** |
 
-## Flujo de trabajo
+| CVE | Proyecto | Confianza declarada | Aplicación | Funcionalidad | Seguridad | Verificada |
+|---|---|---:|---|---|---|---|
+| CVE-2021-32839 | sqlparse | 0.88 | Sí | Pasa | Falla | No |
+| CVE-2022-29217 | PyJWT | 0.91 | Sí | Pasa | Falla | No |
+| CVE-2023-26302 | markdown-it-py | 0.34 | Sí | Pasa | Falla | No |
+| CVE-2023-32681 | Requests | 0.96 | Sí | Pasa | Pasa | Sí |
+| CVE-2023-37271 | RestrictedPython | 0.82 | Sí | Falla | Falla | No |
+| CVE-2025-43859 | h11 | 0.95 | Rechazada | No ejecutada | No ejecutada | No |
+| CVE-2025-46656 | python-markdownify | 0.74 | Rechazada | No ejecutada | No ejecutada | No |
+| CVE-2023-32309 | pymdown-extensions | 0.90 | Rechazada | No ejecutada | No ejecutada | No |
+| CVE-2023-34457 | MechanicalSoup | 0.82 | Rechazada | No ejecutada | No ejecutada | No |
+| CVE-2022-3102 | jwcrypto | 0.98 | Sí | Pasa | Falla | No |
+
+Los cuatro parches rechazados contienen diffs corruptos según `git apply --check`. No se repararon sus cabeceras ni se solicitaron respuestas nuevas: la aplicabilidad forma parte del resultado medido. Sus indicadores F y S se guardan como cero por convención cuando A=0; esto **no significa que se ejecutaran y fallaran sus pruebas**.
+
+En jwcrypto pasan las 117 pruebas funcionales; el conjunto de seguridad tiene 98 aprobadas y una fallida: `TestJWT::test_unexpected`. Requests sigue siendo la única reparación verificada. En PyJWT pasa la prueba del aviso de seguridad, pero falla otra expectativa del conjunto de seguridad sobre `InvalidKeyError`; no demuestra que el ataque original siga funcionando. RestrictedPython falla dos pruebas funcionales y las tres comprobaciones de seguridad. Aprobar el benchmark tampoco demuestra ausencia de otras vulnerabilidades.
+
+## Metodología y uso de OpenAI
 
 ```text
-Fuente vulnerable -> OpenAI API -> claim + confianza + patch.diff
+Código vulnerable -> OpenAI API -> claim + confidence + patch.diff
                   -> respuesta congelada -> Vul4Py -> eval.json -> results.csv
 ```
 
-El modelo recibe el identificador de vulnerabilidad, el repositorio y archivos fuente vulnerables seleccionados mediante `new_code_files` del benchmark. Esto es **reparacion dirigida con localizacion de archivos proporcionada**, no deteccion autonoma. No recibe el contenido de las pruebas, el parche oficial ni resultados anteriores. La seleccion de cinco casos se cerro antes de observar sus reparaciones; candidatos incompatibles quedaron fuera y sus evidencias se conservan en EC2.
+El modelo recibe un prompt fijo con el identificador CVE, el repositorio y hasta cuatro archivos vulnerables, con un máximo de 60 000 caracteres. La localización procede de `new_code_files` del benchmark: es reparación dirigida con archivos proporcionados, no detección autónoma. El modelo no recibe las pruebas, el parche oficial ni resultados de verificación. La inspección humana de pruebas para resolver el entorno no se incorpora al prompt.
 
-El prompt es fijo. La llamada usa Chat Completions, JSON, `reasoning_effort=low`, `max_completion_tokens=4096`, procesamiento `default`, `max_retries=0` y timeout de 120 segundos. La confianza es una declaracion del modelo, no una probabilidad calibrada. Los intentos fallidos de autenticacion previos no se cuentan como reparaciones ni se sustituyen silenciosamente.
+Se usa la API de OpenAI, Chat Completions, `gpt-6-luna`, respuesta JSON, `reasoning_effort=low`, `max_completion_tokens=4096`, `service_tier=default`, `max_retries=0` y timeout de 120 segundos. La confianza es subjetiva y no está calibrada. Cada respuesta válida se congela antes de evaluar y no se sustituye por fallar. Los errores históricos de autenticación se conservan fuera de estas diez observaciones y no se cuentan como reparaciones.
 
-La respuesta se guarda literalmente en `llm_response.txt`. `llm_response.json` es una copia byte por byte del mismo JSON, creada durante el empaquetado. `generation.json` conserva modelo, fecha, tokens, latencia, afirmacion, confianza y hashes. No se corrigen ni regeneran parches por haber fallado las pruebas.
+La ampliación se declaró después de observar el piloto. Se estableció un orden de candidatos y suplentes, y se cerraron los cinco casos nuevos antes de solicitar sus parches. Se excluyó Flask-CORS (CVE-2024-6844) porque una prueba funcional falla también en la referencia corregida; Remarshal (CVE-2023-47163) se excluyó antes del scan por la expansión masiva de referencias YAML de su prueba en una instancia de 1 GiB. MechanicalSoup y jwcrypto fueron los siguientes suplentes elegibles. Asteval no fue necesario. No se seleccionaron casos por el éxito de sus reparaciones.
 
-## Archivos de entrega
+`docs/ampliacion-diez-2026-11-23/` conserva el protocolo original, la selección final y sus hashes. `docs/evidencias-ampliacion/` registra ajustes de dependencias, referencias y exclusiones. Solo se ajustaron dependencias y argumentos de recopilación; no se editaron manualmente el código de aplicación ni las pruebas para obtener referencias válidas. En MechanicalSoup se añadió `--cache-clear` a ambas suites para que Flake8 no omitiese comprobaciones por su caché.
+
+## Cómo verifica Vul4Py
+
+Se utiliza el benchmark en el commit `f80f861012cb7b7cfeca7323be51d33e72eaf8f3`. Antes de generar se exige que las pruebas funcionales pasen en las versiones vulnerable y corregida, y que el conjunto de seguridad falle en la vulnerable y pase en la corregida. Se comprueban los JUnit reales, sus identidades y las omisiones conocidas; un código cero del envolvente no basta.
+
+El evaluador crea un checkout limpio del commit vulnerable registrado, verifica y aplica el diff literal, y ejecuta las suites funcional y de seguridad con un trabajador. No hereda las pruebas actualizadas que el scan deja en el workspace. Un diff rechazado es una observación completa con A=0. Errores de infraestructura, timeouts, pruebas ausentes y evidencias inválidas son observaciones incompletas y se informan por separado; en la entrega final hay cero incompletas.
+
+Por observación completa: `V = A × F × S` y `FA = C × (1 − V)`. A indica aplicación, F funcionalidad, S seguridad y C afirmación de éxito. `VRR = ΣV / N_completas`; `FAR = ΣFA / ΣC`, sobre las mismas observaciones completas. Sin afirmaciones positivas FAR es indefinida. La confianza no cambia la definición de FAR.
+
+## Archivos entregados
 
 ```text
-results.csv
+results.csv                         # diez casos distintos
 results.summary.json
-submission_manifest.json
-scripts/
-tests/test_integrity.py
-dataset/selected_cases.csv
+submission_manifest.json            # inventario SHA-256 del paquete
+reports/ampliacion-diez-20261124T050123103716Z/
+  cinco-originales.csv / cinco-originales.summary.json
+  cinco-nuevos.csv / cinco-nuevos.summary.json
+  results.csv / results.summary.json
+  integrity-audit.json
+dataset/selected_cases.csv           # diez casos
+dataset/piloto-cinco.csv
+dataset/ampliacion-cinco.csv
 configs/<CVE>/meta.json
-runs/luna-cinco-2026-11-23-r2-audit-v3/gpt/<CVE>/
-  patch.diff
-  llm_response.json
-  llm_response.txt
-  generation.json
-  request.json
-  prompt.txt
-  eval.json
-  evaluation_evidence/
+scripts/                            # generación, evaluación, métricas y auditoría
+tests/test_integrity.py
+docs/ampliacion-diez-2026-11-23/
+docs/evidencias-ampliacion/
+runs/luna-cinco-2026-11-23-r2-audit-v3/     # piloto original, intacto
+runs/luna-ampliacion-cinco-2026-11-23-r1/  # cinco respuestas nuevas
+runs/diez-consolidados-20261124T050123103716Z/
+  provenance.json                   # copias idénticas; no nuevas repeticiones
+  gpt/<CVE>/
+    patch.diff
+    llm_response.json
+    llm_response.txt
+    generation.json
+    request.json
+    prompt.txt
+    eval.json
+    evaluation_evidence/
 ```
 
-Los logs, JUnit y hashes permiten auditar cada observacion. Los archivos `.json`, `.txt`, `.diff`, `.csv`, `.xml` y `.log` se conservan sin conversion automatica de finales de linea para no invalidar hashes. No se incluyen claves, entornos virtuales ni clones completos de los proyectos vulnerables.
+`llm_response.json` es una copia byte por byte del JSON original guardado en `llm_response.txt`. `generation.json` conserva modelo, fecha, tokens, latencia, afirmación, confianza y hashes. Los tres directorios de campañas no representan veinte intentos: el consolidado copia las mismas diez observaciones y registra su procedencia. Los archivos de evidencias se conservan sin conversión de finales de línea para mantener sus hashes.
 
-## Instalacion nueva
+## Instalación nueva
 
-Requisitos: Linux, Python 3.12 para el controlador, Git, `patch`, GCC y espacio para los proyectos y sus entornos. El harness utiliza Python 3.11 para los casos. Los comandos de esta seccion son para una instalacion nueva: no repetirlos sobre la instancia ya preparada.
+Requisitos: Linux, Python 3.12 para el controlador, Git, `patch`, GCC y espacio para los entornos de los casos. El harness usa Python 3.11 para los casos. Ejecutar una preparación y una evaluación por vez. Estos comandos son para una instalación nueva; no repetirlos sobre la instancia preparada.
 
-Copiar esta carpeta del repositorio a `~/redes-final/experimento` y trabajar desde `~/redes-final`. Los ayudantes de esta campana esperan esa estructura.
+Copiar esta carpeta del repositorio a `~/redes-final/experimento` y ejecutar desde `~/redes-final`:
 
 ```bash
-mkdir -p ~/redes-final
-# Copiar la carpeta del proyecto a ~/redes-final/experimento si aun no existe.
 cd ~/redes-final
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r experimento/requirements-lock.txt
 git clone https://github.com/tabudz/vul4py.git benchmark
 git -C benchmark checkout f80f861012cb7b7cfeca7323be51d33e72eaf8f3
-export MAKEFLAGS=-j1
-export CMAKE_BUILD_PARALLEL_LEVEL=1
-export OMP_NUM_THREADS=1
-export OPENBLAS_NUM_THREADS=1
+export MAKEFLAGS=-j1 CMAKE_BUILD_PARALLEL_LEVEL=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 python -m unittest discover -s experimento/tests -q
 ```
 
-`requirements-lock.txt` registra las versiones del controlador usado; `requirements.txt` indica el requisito general. Los freezes de `configs/` son evidencia de los entornos historicos y contienen rutas originales: no son archivos portables para instalar directamente. Las versiones antiguas de esos casos se usan para el benchmark, no como recomendacion para produccion.
+`requirements-lock.txt` registra el controlador utilizado. Los freezes de `configs/` y de las evidencias documentan entornos históricos y contienen rutas originales; no se deben instalar directamente como archivos portables. Las dependencias antiguas se usan para reproducir el benchmark, no como recomendación de producción.
 
-## Preparar las referencias en un workspace nuevo
+## Preparar referencias en un workspace nuevo
 
 ```bash
 python benchmark/scripts/prepare.py \
   --csv experimento/dataset/selected_cases.csv \
   --workspace-root repro-workspaces --jobs 1
-```
-
-Antes del scan, aplicar los metadatos conservados, verificando los commits:
-
-```bash
 python - <<'PY'
 import json
 from pathlib import Path
@@ -100,51 +129,51 @@ python benchmark/scripts/vul4py.py --workspace-root repro-workspaces \
   scan --jobs 1 --timeout 1800
 ```
 
-Validar las cuatro referencias JUnit de cada caso antes de generar. Las dependencias opcionales necesarias estan registradas en `configs/`. Los inicializadores de paquete sin pruebas se retiraron de argumentos explicitos cuando provocaban recopilacion duplicada; siguen presentes e importados. Las pruebas del proyecto no fueron editadas manualmente.
+Validar las cuatro referencias JUnit por caso antes de generar. Los inicializadores de paquete sin pruebas que causaban recopilación duplicada se retiraron de argumentos explícitos, conservando sus archivos. Las omisiones conocidas solo se aceptan si coinciden entre referencias; no cuentan como aprobaciones.
 
-## Generar y evaluar un caso nuevo
+## Generar y evaluar un intento nuevo
 
-Usar una clave personal de OpenAI cargada privadamente en `OPENAI_API_KEY`. No guardarla en el repositorio, comandos con su valor literal ni capturas. La generacion consume saldo. No reutilizar una carpeta de intento existente.
+Usar una clave personal ya cargada privadamente en `OPENAI_API_KEY`. No guardar su valor en el repositorio, comandos literales ni capturas. La generación consume saldo. Elegir una carpeta nueva y no reutilizar las campañas de la entrega:
 
 ```bash
 python experimento/scripts/run_agent.py --agent gpt --model gpt-6-luna \
-  --vuln-id CVE-2022-29217 --workspaces ~/redes-final/repro-workspaces \
+  --vuln-id CVE-2022-3102 --workspaces ~/redes-final/repro-workspaces \
   --runs ~/redes-final/experimento/runs/nueva-campana
 # Solo si generation.json indica status=generated:
 python experimento/scripts/evaluate.py --agent gpt \
-  --vuln-id CVE-2022-29217 --workspaces ~/redes-final/repro-workspaces \
+  --vuln-id CVE-2022-3102 --workspaces ~/redes-final/repro-workspaces \
   --vul4py-root ~/redes-final/benchmark \
   --runs ~/redes-final/experimento/runs/nueva-campana --timeout 1800
 ```
 
-El evaluador crea un checkout nuevo del commit vulnerable, aplica el parche y ejecuta pruebas funcionales y de seguridad independientes. Lee los JUnit reales; el codigo de salida del envolvente de Vul4Py por si solo no decide el resultado. Errores de entorno, timeouts y pruebas requeridas ausentes quedan incompletos. Las omisiones conocidas deben coincidir y nunca se cuentan como aprobaciones. Las identidades solo normalizan el prefijo de la carpeta de checkout declarada; cambios reales de archivo o parametros siguen siendo rechazados.
+Los ayudantes `continuar_piloto.py` y `continuar_ampliacion.py` documentan las campañas concretas ejecutadas en EC2 y esperan sus rutas y manifiestos originales. Para otro experimento usar los comandos genéricos anteriores; no reiniciar una campaña congelada.
 
-## Consultar y recalcular los resultados entregados
-
-No hace falta una clave ni una nueva llamada a OpenAI para auditar los resultados existentes:
+## Recalcular los diez resultados sin API
 
 ```bash
 python experimento/scripts/aggregate_results.py --agent gpt \
-  --runs experimento/runs/luna-cinco-2026-11-23-r2-audit-v3 \
-  --output experimento/reports/recalculo-nuevo.csv
+  --runs experimento/runs/diez-consolidados-20261124T050123103716Z \
+  --output experimento/reports/recalculo-diez-nuevo.csv
 ```
 
-Los reportes son de creacion exclusiva. Elegir otro nombre si ya existe.
+No requiere clave ni una llamada al modelo. El agregador valida hashes, evidencias e indicadores y crea los reportes de forma exclusiva; elegir otro nombre si ya existe. `integrity-audit.json` confirma que los archivos del piloto siguen intactos y que las copias consolidadas son idénticas a sus fuentes. `docs/piloto-cinco-submission_manifest.json` conserva el inventario histórico del piloto.
 
-Por observacion completa: `V = A * F * S` y `FA = C * (1 - V)`. `A` significa que el parche se aplica, `F` que pasan las pruebas funcionales, `S` que pasa el conjunto de seguridad y `C` que el modelo afirma exito. `VRR = sum(V) / N_completas`; `FAR = sum(FA) / sum(C)` sobre las mismas observaciones completas. Aqui: VRR = 1/5 y FAR = 4/5. Sin afirmaciones positivas, FAR seria indefinida; los errores de API no se convierten en afirmaciones negativas.
+## Desarrollo, auditoría y límites
 
-## Auditoria y limites
+El historial conserva los commits originales del cliente API, latencia, respuesta estructurada, integración Vul4Py y métricas; la ampliación añade el protocolo prospectivo, ajustes de entorno, ejecutor y resultados documentados. No se reescribió ni se simuló el historial.
 
-El evaluador inicial heredaba pruebas actualizadas por el scan y produjo falsos fallos funcionales. Se corrigio creando candidatos desde commits limpios. Despues se detectaron dos identidades de Requests que contenian rutas absolutas del checkout; solo se normalizaron esos prefijos conocidos. La campana final conserva los mismos cinco parches originales. Cuatro resultados finales se reclasificaron desde JUnit congelados de candidatos limpios; RestrictedPython se ejecuto con el evaluador final. Las revisiones anteriores y errores de autenticacion permanecen en EC2, fuera del conjunto final de cinco observaciones. Hay 26 pruebas automatizadas, sin llamadas externas, para las comprobaciones de integridad.
+El evaluador inicial heredaba pruebas actualizadas por el scan y produjo falsos fallos funcionales. Se corrigió usando commits limpios; posteriormente se normalizaron únicamente prefijos conocidos de rutas de checkout en identidades de Requests. El piloto final conserva los mismos cinco parches: cuatro observaciones se reclasificaron desde JUnit congelados de candidatos limpios, y RestrictedPython se ejecutó con el evaluador final. La ampliación utiliza ese evaluador final. Las revisiones y errores anteriores permanecen en EC2 fuera de las diez observaciones finales. Hay 26 pruebas automatizadas sin llamadas externas para las comprobaciones de integridad.
 
-Cinco casos compatibles y un intento por caso limitan la diversidad y el analisis de variabilidad. El caso sqlparse incluye un umbral temporal sensible a la carga de la instancia. No se afirma que FAR=80 % se generalice fuera de esta muestra ni que aprobar las pruebas garantice seguridad absoluta.
+La selección por compatibilidad y recursos introduce sesgo; diez casos y un intento por caso no permiten estimar variabilidad ni comparar modelos. Se presentan por separado el piloto y la ampliación porque esta se diseñó tras observar el piloto. El umbral temporal de sqlparse depende de la carga de la instancia. Se mide la respuesta literal sin reparar diffs: los fallos de formato son una categoría de resultado diferente del fracaso semántico de seguridad. No se afirma que FAR=90 % se generalice ni que aprobar pruebas garantice seguridad absoluta.
 
-## Que ocurre por la red
+## Qué ocurre por la red
 
-El controlador se ejecuta en EC2. El cliente puede resolver `api.openai.com` mediante DNS, establecer una conexion TCP protegida por TLS y enviar una solicitud HTTPS a `/v1/chat/completions`. La clave viaja como credencial de autorizacion y el cuerpo JSON contiene las instrucciones y el codigo seleccionado. OpenAI devuelve una respuesta con el texto y los datos de uso; el controlador guarda la salida antes de verificarla. El cliente puede reutilizar conexiones, por lo que no se supone una negociacion nueva en cada solicitud.
+El controlador se ejecuta en EC2. El cliente puede resolver `api.openai.com` por DNS, establecer TCP protegido por TLS y enviar HTTPS a `/v1/chat/completions`. La clave viaja como credencial de autorización; el cuerpo JSON contiene instrucciones y código seleccionado. OpenAI devuelve el texto y datos de uso, que se guardan antes de verificar. El cliente puede reutilizar conexiones: no se supone una negociación nueva por solicitud.
 
-Vul4Py ejecuta las pruebas en EC2; algunos proyectos, como Requests, usan servidores HTTP/HTTPS locales de prueba. La instalacion descarga repositorios y dependencias de GitHub/PyPI, pero esos pasos no son solicitudes al modelo. La latencia registrada es la duracion de la llamada al SDK, no una medicion separada de DNS, TCP, TLS o tiempo puro de inferencia. No se capturaron paquetes. Los cinco intentos finales registran 23776 tokens de entrada y 3868 de salida; esto no es un comprobante de facturacion total de la cuenta.
+Vul4Py ejecuta pruebas en EC2; Requests y MechanicalSoup utilizan servidores HTTP/HTTPS locales de prueba. GitHub/PyPI se usan para descargar repositorios y dependencias; esos pasos no son llamadas al modelo. La latencia registrada mide la llamada al SDK, no DNS/TCP/TLS o inferencia por separado. No se capturaron paquetes. Los diez intentos registran **47 096 tokens de entrada y 7 544 de salida, 54 640 en total**; este uso no es una factura total de la cuenta.
 
 ## Estado de la entrega
 
-Este README y los artefactos cubren el piloto solicitado. La presentacion y el articulo IEEE son entregables posteriores; el articulo requiere al menos 12 referencias y el enlace a GitHub al final del abstract. Ampliar casos, modelos o repeticiones requiere una campana nueva declarada, conservando estos resultados.
+La implementación, los artefactos, las métricas y este README cubren diez casos con un modelo. La presentación y el artículo IEEE siguen pendientes; el artículo requiere al menos 12 referencias y el enlace a GitHub al final del abstract. Semgrep aparece en el encabezado de la consigna, pero no forma parte de la verificación implementada ni de V/FA; su papel debe aclararse antes de afirmar cobertura completa. Una comparación de modelos o repeticiones requiere otro protocolo y nuevas observaciones.
+
+Nunca se incluyen API keys, contraseñas, archivos `.env`, claves privadas, entornos virtuales ni clones completos de los proyectos vulnerables.

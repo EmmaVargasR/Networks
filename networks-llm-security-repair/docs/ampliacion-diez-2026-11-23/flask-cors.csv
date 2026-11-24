@@ -1,0 +1,2 @@
+vuln_id,repo_url,fix_commit
+CVE-2024-6844,https://github.com/corydolphin/flask-cors,35d875319621bd129a38b2b823abf4a2f6cda536

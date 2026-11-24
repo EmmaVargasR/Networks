@@ -1,0 +1,2 @@
+vuln_id,repo_url,fix_commit
+CVE-2023-47163,https://github.com/remarshal-project/remarshal,fd6ac799a02f533c3fc243b49cdd6d21aa7ee494

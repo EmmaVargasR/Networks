@@ -1,0 +1,30 @@
+{
+  "note": "Only byte-identical response aliases added to the published pooled copy; source campaigns and evaluation evidence unchanged.",
+  "aliases": {
+    "CVE-2021-32839": {
+      "added": "llm_response.json",
+      "copied_from": "llm_response.txt",
+      "sha256": "b66f5603625d1072d3c5737e63dee6de004dee8420850988d7b54af8a2c7842c"
+    },
+    "CVE-2022-29217": {
+      "added": "llm_response.json",
+      "copied_from": "llm_response.txt",
+      "sha256": "d48a8178d40cc64cb25ea78b13c4438c3f5c3a5dca25361d94ee9aadbb80b198"
+    },
+    "CVE-2023-26302": {
+      "added": "llm_response.json",
+      "copied_from": "llm_response.txt",
+      "sha256": "4a531e46e683462f6d50d0ccdd89495ff1bdf1b496b9337635915400d3678a0c"
+    },
+    "CVE-2023-32681": {
+      "added": "llm_response.json",
+      "copied_from": "llm_response.txt",
+      "sha256": "be0ce6509241d591b2b90d664c4379443c4e5a50c41321fc6b59757720723c65"
+    },
+    "CVE-2023-37271": {
+      "added": "llm_response.json",
+      "copied_from": "llm_response.txt",
+      "sha256": "1927740f86f7bd68ceecacfb8dad958ebd26eab3230b44db3f70e5c62aee8cec"
+    }
+  }
+}

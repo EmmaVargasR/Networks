@@ -1,0 +1,2 @@
+vuln_id,repo_url,fix_commit
+CVE-2025-43859,https://github.com/python-hyper/h11,114803a29ce50116dc47951c690ad4892b1a36ed

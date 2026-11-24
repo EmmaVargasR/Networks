@@ -1,0 +1,9 @@
+case_id	role	baseline_status	decision	reason
+CVE-2025-43859	primary	VALIDATED	ELIGIBLE	Strict references validated; source context eligible; evidence and dependencies frozen
+CVE-2024-6844	primary	REFERENCE_FAILURE	EXCLUDED	test_parse_resources_sorted fails in vulnerable and fixed; confirmed intrinsic ordering mismatch, no model call
+CVE-2025-46656	primary	VALIDATED	ELIGIBLE	Strict references validated; source context eligible; evidence and dependencies frozen
+CVE-2023-47163	primary	RESOURCE_INELIGIBLE	EXCLUDED	Resource screening: YAML aliases fan out ninefold through ten levels; vulnerable conversion materializes enormous JSON; not executed on 1 GiB host; no model request
+CVE-2023-32309	primary	VALIDATED	ELIGIBLE	Strict references validated; source context eligible; evidence and dependencies frozen
+CVE-2023-34457	reserve	VALIDATED	ELIGIBLE	Strict references validated; source context eligible; evidence and dependencies frozen
+CVE-2022-3102	reserve	VALIDATED	ELIGIBLE	Strict references validated; source context eligible; evidence and dependencies frozen
+CVE-2025-24359	reserve	PENDING	NOT_NEEDED	Five eligible new cases already selected in prospective order; no model call

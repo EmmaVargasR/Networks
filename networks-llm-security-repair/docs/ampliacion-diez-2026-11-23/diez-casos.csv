@@ -1,0 +1,11 @@
+vuln_id,repo_url,fix_commit
+CVE-2021-32839,https://github.com/andialbrecht/sqlparse,8238a9e450ed1524e40cb3a8b0b3c00606903aeb
+CVE-2022-29217,https://github.com/jpadilla/pyjwt,9c528670c455b8d948aff95ed50e22940d1ad3fc
+CVE-2023-26302,https://github.com/executablebooks/markdown-it-py,53ca3e9c2b9e9b295f6abf7f4ad2730a9b70f68c
+CVE-2023-32681,https://github.com/psf/requests,74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5
+CVE-2023-37271,https://github.com/zopefoundation/RestrictedPython,c8eca66ae49081f0016d2e1f094c3d72095ef531
+CVE-2025-43859,https://github.com/python-hyper/h11,114803a29ce50116dc47951c690ad4892b1a36ed
+CVE-2025-46656,https://github.com/matthewwithanm/python-markdownify,959561879693bf4a576f99c6733b50b01186aa08
+CVE-2023-32309,https://github.com/facelessuser/pymdown-extensions,b7bb4878d6017c03c8dc97c42d8d3bb6ee81db9d
+CVE-2023-34457,https://github.com/MechanicalSoup/MechanicalSoup,d57c4a269bba3b9a0c5bfa20292955b849006d9e
+CVE-2022-3102,https://github.com/latchset/jwcrypto,f4e912f83cb578e2cd47f8a9398bf15f680bf558

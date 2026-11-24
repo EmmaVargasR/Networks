@@ -1,0 +1,4 @@
+vuln_id,repo_url,fix_commit
+CVE-2023-34457,https://github.com/MechanicalSoup/MechanicalSoup,d57c4a269bba3b9a0c5bfa20292955b849006d9e
+CVE-2022-3102,https://github.com/latchset/jwcrypto,f4e912f83cb578e2cd47f8a9398bf15f680bf558
+CVE-2025-24359,https://github.com/lmfit/asteval,45bb47533f7abb5479618ae7f6a809215700dcb2
