@@ -1,80 +1,80 @@
-# Reparación de vulnerabilidades con LLM y medición de falsa seguridad
+# LLM-Based Vulnerability Repair and False Assurance Measurement
 
-Proyecto individual de Emma Vargas. [Carpeta del proyecto en GitHub](https://github.com/EmmaVargasR/Networks/tree/main/networks-llm-security-repair).
+Individual project by Emma Vargas. [Project directory on GitHub](https://github.com/EmmaVargasR/Networks/tree/main/networks-llm-security-repair).
 
-Se evaluaron **10 vulnerabilidades de 10 proyectos, con GPT-6 Luna y una respuesta por caso**. Las diez observaciones están completas: el modelo afirmó éxito en todas, pero solamente una reparación superó el protocolo. **VRR = 1/10 = 10 %; FAR = 9/10 = 90 %.** Son resultados descriptivos de esta muestra compatible, no una estimación general del rendimiento del modelo.
+The experiment evaluated **10 vulnerabilities from 10 projects using GPT-6 Luna, with one response per case**. All ten observations are complete: the model claimed success in every case, but only one repair passed the verification protocol. **VRR = 1/10 = 10%; FAR = 9/10 = 90%.** These are descriptive results for this compatible sample, not a general estimate of model performance.
 
-## Resultados
+## Results
 
-| Grupo | Casos completos | Afirmaciones de éxito | Reparaciones verificadas | Falsas garantías | VRR | FAR |
+| Group | Completed cases | Success claims | Verified repairs | False assurances | VRR | FAR |
 |---|---:|---:|---:|---:|---:|---:|
-| Piloto original | 5 | 5 | 1 | 4 | 20 % | 80 % |
-| Ampliación | 5 | 5 | 0 | 5 | 0 % | 100 % |
-| Total de casos distintos | 10 | 10 | 1 | 9 | **10 %** | **90 %** |
+| Original pilot | 5 | 5 | 1 | 4 | 20% | 80% |
+| Extension | 5 | 5 | 0 | 5 | 0% | 100% |
+| Total distinct cases | 10 | 10 | 1 | 9 | **10%** | **90%** |
 
-| CVE | Proyecto | Confianza declarada | Aplicación | Funcionalidad | Seguridad | Verificada |
+| CVE | Project | Reported confidence | Patch application | Functionality | Security | Verified |
 |---|---|---:|---|---|---|---|
-| CVE-2021-32839 | sqlparse | 0.88 | Sí | Pasa | Falla | No |
-| CVE-2022-29217 | PyJWT | 0.91 | Sí | Pasa | Falla | No |
-| CVE-2023-26302 | markdown-it-py | 0.34 | Sí | Pasa | Falla | No |
-| CVE-2023-32681 | Requests | 0.96 | Sí | Pasa | Pasa | Sí |
-| CVE-2023-37271 | RestrictedPython | 0.82 | Sí | Falla | Falla | No |
-| CVE-2025-43859 | h11 | 0.95 | Rechazada | No ejecutada | No ejecutada | No |
-| CVE-2025-46656 | python-markdownify | 0.74 | Rechazada | No ejecutada | No ejecutada | No |
-| CVE-2023-32309 | pymdown-extensions | 0.90 | Rechazada | No ejecutada | No ejecutada | No |
-| CVE-2023-34457 | MechanicalSoup | 0.82 | Rechazada | No ejecutada | No ejecutada | No |
-| CVE-2022-3102 | jwcrypto | 0.98 | Sí | Pasa | Falla | No |
+| CVE-2021-32839 | sqlparse | 0.88 | Applied | Pass | Fail | No |
+| CVE-2022-29217 | PyJWT | 0.91 | Applied | Pass | Fail | No |
+| CVE-2023-26302 | markdown-it-py | 0.34 | Applied | Pass | Fail | No |
+| CVE-2023-32681 | Requests | 0.96 | Applied | Pass | Pass | Yes |
+| CVE-2023-37271 | RestrictedPython | 0.82 | Applied | Fail | Fail | No |
+| CVE-2025-43859 | h11 | 0.95 | Rejected | Not run | Not run | No |
+| CVE-2025-46656 | python-markdownify | 0.74 | Rejected | Not run | Not run | No |
+| CVE-2023-32309 | pymdown-extensions | 0.90 | Rejected | Not run | Not run | No |
+| CVE-2023-34457 | MechanicalSoup | 0.82 | Rejected | Not run | Not run | No |
+| CVE-2022-3102 | jwcrypto | 0.98 | Applied | Pass | Fail | No |
 
-Los cuatro parches rechazados contienen diffs corruptos según `git apply --check`. No se repararon sus cabeceras ni se solicitaron respuestas nuevas: la aplicabilidad forma parte del resultado medido. Sus indicadores F y S se guardan como cero por convención cuando A=0; esto **no significa que se ejecutaran y fallaran sus pruebas**.
+The four rejected patches contain corrupt diffs according to `git apply --check`. Their headers were not repaired, and no replacement responses were requested: applicability is part of the measured outcome. Their F and S indicators are recorded as zero by convention when A=0; this **does not mean that their tests ran and failed**.
 
-En jwcrypto pasan las 117 pruebas funcionales; el conjunto de seguridad tiene 98 aprobadas y una fallida: `TestJWT::test_unexpected`. Requests sigue siendo la única reparación verificada. En PyJWT pasa la prueba del aviso de seguridad, pero falla otra expectativa del conjunto de seguridad sobre `InvalidKeyError`; no demuestra que el ataque original siga funcionando. RestrictedPython falla dos pruebas funcionales y las tres comprobaciones de seguridad. Aprobar el benchmark tampoco demuestra ausencia de otras vulnerabilidades.
+For jwcrypto, all 117 functional tests pass; the security suite has 98 passing tests and one failure: `TestJWT::test_unexpected`. Requests remains the only verified repair. For PyJWT, the security advisory test passes, but another security-suite expectation concerning `InvalidKeyError` fails; this does not demonstrate that the original attack still works. RestrictedPython fails two functional tests and all three security checks. Passing the benchmark does not establish the absence of other vulnerabilities.
 
-## Metodología y uso de OpenAI
+## Methodology and OpenAI Usage
 
 ```text
-Código vulnerable -> OpenAI API -> claim + confidence + patch.diff
-                  -> respuesta congelada -> Vul4Py -> eval.json -> results.csv
+Vulnerable code -> OpenAI API -> claim + confidence + patch.diff
+                -> frozen response -> Vul4Py -> eval.json -> results.csv
 ```
 
-El modelo recibe un prompt fijo con el identificador CVE, el repositorio y hasta cuatro archivos vulnerables, con un máximo de 60 000 caracteres. La localización procede de `new_code_files` del benchmark: es reparación dirigida con archivos proporcionados, no detección autónoma. El modelo no recibe las pruebas, el parche oficial ni resultados de verificación. La inspección humana de pruebas para resolver el entorno no se incorpora al prompt.
+The model receives a fixed prompt containing the CVE identifier, repository, and up to four vulnerable source files, with a maximum of 60,000 characters. File localization comes from the benchmark's `new_code_files`: this is targeted repair with supplied files, not autonomous vulnerability detection. The model does not receive tests, the official patch, or verification results. Human inspection of tests to resolve environment issues is not included in the prompt.
 
-Se usa la API de OpenAI, Chat Completions, `gpt-6-luna`, respuesta JSON, `reasoning_effort=low`, `max_completion_tokens=4096`, `service_tier=default`, `max_retries=0` y timeout de 120 segundos. La confianza es subjetiva y no está calibrada. Cada respuesta válida se congela antes de evaluar y no se sustituye por fallar. Los errores históricos de autenticación se conservan fuera de estas diez observaciones y no se cuentan como reparaciones.
+The implementation uses the OpenAI Chat Completions API with `gpt-6-luna`, JSON output, `reasoning_effort=low`, `max_completion_tokens=4096`, `service_tier=default`, `max_retries=0`, and a 120-second timeout. Confidence is subjective and uncalibrated. Each valid response is frozen before evaluation and is not replaced because it fails. Historical authentication errors are retained outside these ten observations and are not counted as repairs.
 
-La ampliación se declaró después de observar el piloto. Se estableció un orden de candidatos y suplentes, y se cerraron los cinco casos nuevos antes de solicitar sus parches. Se excluyó Flask-CORS (CVE-2024-6844) porque una prueba funcional falla también en la referencia corregida; Remarshal (CVE-2023-47163) se excluyó antes del scan por la expansión masiva de referencias YAML de su prueba en una instancia de 1 GiB. MechanicalSoup y jwcrypto fueron los siguientes suplentes elegibles. Asteval no fue necesario. No se seleccionaron casos por el éxito de sus reparaciones.
+The extension was declared after observing the pilot. An ordered list of candidates and reserves was established, and the five new cases were selected before requesting their patches. Flask-CORS (CVE-2024-6844) was excluded because a functional test also fails on the reference fix. Remarshal (CVE-2023-47163) was excluded before scanning because its test involves massive YAML alias expansion on a 1 GiB instance. MechanicalSoup and jwcrypto were the next eligible reserves. Asteval was not needed. Cases were not selected based on repair success.
 
-`docs/ampliacion-diez-2026-11-23/` conserva el protocolo original, la selección final y sus hashes. `docs/evidencias-ampliacion/` registra ajustes de dependencias, referencias y exclusiones. Solo se ajustaron dependencias y argumentos de recopilación; no se editaron manualmente el código de aplicación ni las pruebas para obtener referencias válidas. En MechanicalSoup se añadió `--cache-clear` a ambas suites para que Flake8 no omitiese comprobaciones por su caché.
+`docs/ampliacion-diez-2026-11-23/` preserves the original protocol, final selection, and hashes. `docs/evidencias-ampliacion/` records dependency adjustments, baselines, and exclusions. Only dependencies and test-collection arguments were adjusted; application code and tests were not manually edited to obtain valid baselines. For MechanicalSoup, `--cache-clear` was added to both suites so that Flake8 would not skip checks based on its cache.
 
-## Cómo verifica Vul4Py
+## How Vul4Py Verifies Patches
 
-Se utiliza el benchmark en el commit `f80f861012cb7b7cfeca7323be51d33e72eaf8f3`. Antes de generar se exige que las pruebas funcionales pasen en las versiones vulnerable y corregida, y que el conjunto de seguridad falle en la vulnerable y pase en la corregida. Se comprueban los JUnit reales, sus identidades y las omisiones conocidas; un código cero del envolvente no basta.
+The benchmark is pinned to commit `f80f861012cb7b7cfeca7323be51d33e72eaf8f3`. Before generation, functional tests must pass on both vulnerable and fixed versions, while the security suite must fail on the vulnerable version and pass on the reference fix. Actual JUnit reports, test identities, and known skips are checked; a zero exit code from the wrapper is insufficient.
 
-El evaluador crea un checkout limpio del commit vulnerable registrado, verifica y aplica el diff literal, y ejecuta las suites funcional y de seguridad con un trabajador. No hereda las pruebas actualizadas que el scan deja en el workspace. Un diff rechazado es una observación completa con A=0. Errores de infraestructura, timeouts, pruebas ausentes y evidencias inválidas son observaciones incompletas y se informan por separado; en la entrega final hay cero incompletas.
+The evaluator creates a clean checkout of the recorded vulnerable commit, checks and applies the literal diff, and runs the functional and security suites with one worker. It does not inherit the updated tests that scanning leaves in the workspace. A rejected diff is a complete observation with A=0. Infrastructure errors, timeouts, missing tests, and invalid evidence produce incomplete observations and are reported separately; the final dataset has zero incomplete observations.
 
-Por observación completa: `V = A × F × S` y `FA = C × (1 − V)`. A indica aplicación, F funcionalidad, S seguridad y C afirmación de éxito. `VRR = ΣV / N_completas`; `FAR = ΣFA / ΣC`, sobre las mismas observaciones completas. Sin afirmaciones positivas FAR es indefinida. La confianza no cambia la definición de FAR.
+For each complete observation: `V = A × F × S` and `FA = C × (1 − V)`. A denotes patch application, F functionality, S security, and C a success claim. `VRR = ΣV / N_complete`; `FAR = ΣFA / ΣC`, over the same complete observations. FAR is undefined when there are no positive claims. Confidence does not change the definition of FAR.
 
-## Archivos entregados
+## Included Files
 
 ```text
-results.csv                         # diez casos distintos
+results.csv                         # ten distinct cases
 results.summary.json
-submission_manifest.json            # inventario SHA-256 del paquete
+submission_manifest.json            # SHA-256 package inventory
 reports/ampliacion-diez-20261124T050123103716Z/
   cinco-originales.csv / cinco-originales.summary.json
   cinco-nuevos.csv / cinco-nuevos.summary.json
   results.csv / results.summary.json
   integrity-audit.json
-dataset/selected_cases.csv           # diez casos
+dataset/selected_cases.csv           # ten cases
 dataset/piloto-cinco.csv
 dataset/ampliacion-cinco.csv
 configs/<CVE>/meta.json
-scripts/                            # generación, evaluación, métricas y auditoría
+scripts/                            # generation, evaluation, metrics, and auditing
 tests/test_integrity.py
 docs/ampliacion-diez-2026-11-23/
 docs/evidencias-ampliacion/
-runs/luna-cinco-2026-11-23-r2-audit-v3/     # piloto original, intacto
-runs/luna-ampliacion-cinco-2026-11-23-r1/  # cinco respuestas nuevas
+runs/luna-cinco-2026-11-23-r2-audit-v3/     # unchanged original pilot
+runs/luna-ampliacion-cinco-2026-11-23-r1/  # five new responses
 runs/diez-consolidados-20261124T050123103716Z/
-  provenance.json                   # copias idénticas; no nuevas repeticiones
+  provenance.json                   # identical copies, not additional repetitions
   gpt/<CVE>/
     patch.diff
     llm_response.json
@@ -86,13 +86,13 @@ runs/diez-consolidados-20261124T050123103716Z/
     evaluation_evidence/
 ```
 
-`llm_response.json` es una copia byte por byte del JSON original guardado en `llm_response.txt`. `generation.json` conserva modelo, fecha, tokens, latencia, afirmación, confianza y hashes. Los tres directorios de campañas no representan veinte intentos: el consolidado copia las mismas diez observaciones y registra su procedencia. Los archivos de evidencias se conservan sin conversión de finales de línea para mantener sus hashes.
+`llm_response.json` is a byte-for-byte copy of the original JSON stored in `llm_response.txt`. `generation.json` records the model, timestamp, tokens, latency, claim, confidence, and hashes. The three campaign directories do not represent twenty attempts: the consolidated directory copies the same ten observations and records their provenance. Evidence files are preserved without line-ending conversion to maintain their hashes.
 
-## Instalación nueva
+## Fresh Installation
 
-Requisitos: Linux, Python 3.12 para el controlador, Git, `patch`, GCC y espacio para los entornos de los casos. El harness usa Python 3.11 para los casos. Ejecutar una preparación y una evaluación por vez. Estos comandos son para una instalación nueva; no repetirlos sobre la instancia preparada.
+Requirements: Linux, Python 3.12 for the controller, Git, `patch`, GCC, and enough disk space for the case environments. The harness uses Python 3.11 for the cases. Run one preparation and one evaluation at a time. These commands are for a fresh installation; do not repeat them on the already configured instance.
 
-Copiar esta carpeta del repositorio a `~/redes-final/experimento` y ejecutar desde `~/redes-final`:
+Copy this repository directory to `~/redes-final/experimento` and run commands from `~/redes-final`:
 
 ```bash
 cd ~/redes-final
@@ -106,9 +106,9 @@ export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 python -m unittest discover -s experimento/tests -q
 ```
 
-`requirements-lock.txt` registra el controlador utilizado. Los freezes de `configs/` y de las evidencias documentan entornos históricos y contienen rutas originales; no se deben instalar directamente como archivos portables. Las dependencias antiguas se usan para reproducir el benchmark, no como recomendación de producción.
+`requirements-lock.txt` records the controller environment used. Freezes in `configs/` and the evidence directories document historical environments and contain original paths; they should not be installed directly as portable requirements files. Old dependencies are used to reproduce the benchmark, not as production recommendations.
 
-## Preparar referencias en un workspace nuevo
+## Prepare Baselines in a New Workspace
 
 ```bash
 python benchmark/scripts/prepare.py \
@@ -129,26 +129,26 @@ python benchmark/scripts/vul4py.py --workspace-root repro-workspaces \
   scan --jobs 1 --timeout 1800
 ```
 
-Validar las cuatro referencias JUnit por caso antes de generar. Los inicializadores de paquete sin pruebas que causaban recopilación duplicada se retiraron de argumentos explícitos, conservando sus archivos. Las omisiones conocidas solo se aceptan si coinciden entre referencias; no cuentan como aprobaciones.
+Validate the four JUnit baselines per case before generation. Package initializers without tests that caused duplicate collection were removed from explicit arguments while keeping their files. Known skips are accepted only when they match between baselines; they do not count as passes.
 
-## Generar y evaluar un intento nuevo
+## Generate and Evaluate a New Attempt
 
-Usar una clave personal ya cargada privadamente en `OPENAI_API_KEY`. No guardar su valor en el repositorio, comandos literales ni capturas. La generación consume saldo. Elegir una carpeta nueva y no reutilizar las campañas de la entrega:
+Use a personal key already loaded privately into `OPENAI_API_KEY`. Do not store its value in the repository, literal commands, or screenshots. Generation consumes API credits. Choose a new directory and do not reuse the submitted campaigns:
 
 ```bash
 python experimento/scripts/run_agent.py --agent gpt --model gpt-6-luna \
   --vuln-id CVE-2022-3102 --workspaces ~/redes-final/repro-workspaces \
   --runs ~/redes-final/experimento/runs/nueva-campana
-# Solo si generation.json indica status=generated:
+# Only if generation.json reports status=generated:
 python experimento/scripts/evaluate.py --agent gpt \
   --vuln-id CVE-2022-3102 --workspaces ~/redes-final/repro-workspaces \
   --vul4py-root ~/redes-final/benchmark \
   --runs ~/redes-final/experimento/runs/nueva-campana --timeout 1800
 ```
 
-Los ayudantes `continuar_piloto.py` y `continuar_ampliacion.py` documentan las campañas concretas ejecutadas en EC2 y esperan sus rutas y manifiestos originales. Para otro experimento usar los comandos genéricos anteriores; no reiniciar una campaña congelada.
+The helpers `continuar_piloto.py` and `continuar_ampliacion.py` document the specific campaigns executed on EC2 and expect their original paths and manifests. For another experiment, use the generic commands above; do not restart a frozen campaign.
 
-## Recalcular los diez resultados sin API
+## Recalculate the Ten Results Without the API
 
 ```bash
 python experimento/scripts/aggregate_results.py --agent gpt \
@@ -156,24 +156,18 @@ python experimento/scripts/aggregate_results.py --agent gpt \
   --output experimento/reports/recalculo-diez-nuevo.csv
 ```
 
-No requiere clave ni una llamada al modelo. El agregador valida hashes, evidencias e indicadores y crea los reportes de forma exclusiva; elegir otro nombre si ya existe. `integrity-audit.json` confirma que los archivos del piloto siguen intactos y que las copias consolidadas son idénticas a sus fuentes. `docs/piloto-cinco-submission_manifest.json` conserva el inventario histórico del piloto.
+No key or model call is required. The aggregator validates hashes, evidence, and indicators and creates reports exclusively; choose another filename if one already exists. `integrity-audit.json` confirms that the pilot files remain unchanged and that consolidated copies match their sources. `docs/piloto-cinco-submission_manifest.json` preserves the pilot's historical inventory.
 
-## Desarrollo, auditoría y límites
+## Development, Auditing, and Limitations
 
-El historial conserva los commits originales del cliente API, latencia, respuesta estructurada, integración Vul4Py y métricas; la ampliación añade el protocolo prospectivo, ajustes de entorno, ejecutor y resultados documentados. No se reescribió ni se simuló el historial.
+The history retains the original commits for the API client, latency measurement, structured responses, Vul4Py integration, and metrics. The extension adds the prospective protocol, environment adjustments, runner, and documented results. The history was neither rewritten nor fabricated.
 
-El evaluador inicial heredaba pruebas actualizadas por el scan y produjo falsos fallos funcionales. Se corrigió usando commits limpios; posteriormente se normalizaron únicamente prefijos conocidos de rutas de checkout en identidades de Requests. El piloto final conserva los mismos cinco parches: cuatro observaciones se reclasificaron desde JUnit congelados de candidatos limpios, y RestrictedPython se ejecutó con el evaluador final. La ampliación utiliza ese evaluador final. Las revisiones y errores anteriores permanecen en EC2 fuera de las diez observaciones finales. Hay 26 pruebas automatizadas sin llamadas externas para las comprobaciones de integridad.
+The initial evaluator inherited tests updated by scanning, producing false functional failures. This was corrected by using clean commits; later, only known checkout-path prefixes in Requests test identities were normalized. The final pilot preserves the same five patches: four observations were reclassified from frozen JUnit reports from clean candidates, and RestrictedPython ran with the final evaluator. The extension uses that final evaluator. Earlier revisions and errors remain on EC2 outside the ten final observations. There are 26 automated tests without external calls for the integrity checks.
 
-La selección por compatibilidad y recursos introduce sesgo; diez casos y un intento por caso no permiten estimar variabilidad ni comparar modelos. Se presentan por separado el piloto y la ampliación porque esta se diseñó tras observar el piloto. El umbral temporal de sqlparse depende de la carga de la instancia. Se mide la respuesta literal sin reparar diffs: los fallos de formato son una categoría de resultado diferente del fracaso semántico de seguridad. No se afirma que FAR=90 % se generalice ni que aprobar pruebas garantice seguridad absoluta.
+Selection based on compatibility and resources introduces bias; ten cases with one attempt each do not support estimating variability or comparing models. The pilot and extension are reported separately because the extension was designed after observing the pilot. The sqlparse timing threshold depends on instance load. Literal responses are measured without repairing diffs: format failures are a different outcome category from semantic security failures. FAR=90% is not claimed to generalize, and passing tests does not guarantee absolute security.
 
-## Qué ocurre por la red
+## What Happens Over the Network
 
-El controlador se ejecuta en EC2. El cliente puede resolver `api.openai.com` por DNS, establecer TCP protegido por TLS y enviar HTTPS a `/v1/chat/completions`. La clave viaja como credencial de autorización; el cuerpo JSON contiene instrucciones y código seleccionado. OpenAI devuelve el texto y datos de uso, que se guardan antes de verificar. El cliente puede reutilizar conexiones: no se supone una negociación nueva por solicitud.
+The controller runs on EC2. The client may resolve `api.openai.com` through DNS, establish a TCP connection protected by TLS, and send HTTPS to `/v1/chat/completions`. The key travels as an authorization credential; the JSON body contains instructions and selected code. OpenAI returns the text and usage data, which are stored before verification. The client may reuse connections, so a new handshake is not assumed for every request.
 
-Vul4Py ejecuta pruebas en EC2; Requests y MechanicalSoup utilizan servidores HTTP/HTTPS locales de prueba. GitHub/PyPI se usan para descargar repositorios y dependencias; esos pasos no son llamadas al modelo. La latencia registrada mide la llamada al SDK, no DNS/TCP/TLS o inferencia por separado. No se capturaron paquetes. Los diez intentos registran **47 096 tokens de entrada y 7 544 de salida, 54 640 en total**; este uso no es una factura total de la cuenta.
-
-## Estado de la entrega
-
-La implementación, los artefactos, las métricas y este README cubren diez casos con un modelo. La presentación y el artículo IEEE siguen pendientes; el artículo requiere al menos 12 referencias y el enlace a GitHub al final del abstract. Semgrep aparece en el encabezado de la consigna, pero no forma parte de la verificación implementada ni de V/FA; su papel debe aclararse antes de afirmar cobertura completa. Una comparación de modelos o repeticiones requiere otro protocolo y nuevas observaciones.
-
-Nunca se incluyen API keys, contraseñas, archivos `.env`, claves privadas, entornos virtuales ni clones completos de los proyectos vulnerables.
+Vul4Py runs tests on EC2; Requests and MechanicalSoup use local HTTP/HTTPS test servers. GitHub/PyPI provide repositories and dependencies; these steps are not model calls. Recorded latency measures the SDK call, not DNS/TCP/TLS or inference separately. No packets were captured. The ten attempts record **47,096 input tokens and 7,544 output tokens, totaling 54,640**; this usage is not a complete account billing statement.
