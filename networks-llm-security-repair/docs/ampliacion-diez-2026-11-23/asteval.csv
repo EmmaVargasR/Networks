@@ -1,0 +1,2 @@
+vuln_id,repo_url,fix_commit
+CVE-2025-24359,https://github.com/lmfit/asteval,45bb47533f7abb5479618ae7f6a809215700dcb2

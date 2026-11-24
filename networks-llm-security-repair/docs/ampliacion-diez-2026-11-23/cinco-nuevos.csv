@@ -1,0 +1,6 @@
+vuln_id,repo_url,fix_commit
+CVE-2025-43859,https://github.com/python-hyper/h11,114803a29ce50116dc47951c690ad4892b1a36ed
+CVE-2025-46656,https://github.com/matthewwithanm/python-markdownify,959561879693bf4a576f99c6733b50b01186aa08
+CVE-2023-32309,https://github.com/facelessuser/pymdown-extensions,b7bb4878d6017c03c8dc97c42d8d3bb6ee81db9d
+CVE-2023-34457,https://github.com/MechanicalSoup/MechanicalSoup,d57c4a269bba3b9a0c5bfa20292955b849006d9e
+CVE-2022-3102,https://github.com/latchset/jwcrypto,f4e912f83cb578e2cd47f8a9398bf15f680bf558

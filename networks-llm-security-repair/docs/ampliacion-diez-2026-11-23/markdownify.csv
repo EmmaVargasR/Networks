@@ -1,0 +1,2 @@
+vuln_id,repo_url,fix_commit
+CVE-2025-46656,https://github.com/matthewwithanm/python-markdownify,959561879693bf4a576f99c6733b50b01186aa08

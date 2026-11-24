@@ -1,0 +1,2 @@
+vuln_id,repo_url,fix_commit
+CVE-2023-32309,https://github.com/facelessuser/pymdown-extensions,b7bb4878d6017c03c8dc97c42d8d3bb6ee81db9d

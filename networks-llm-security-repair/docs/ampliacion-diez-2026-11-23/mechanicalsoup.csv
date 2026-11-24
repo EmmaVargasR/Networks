@@ -1,0 +1,2 @@
+vuln_id,repo_url,fix_commit
+CVE-2023-34457,https://github.com/MechanicalSoup/MechanicalSoup,d57c4a269bba3b9a0c5bfa20292955b849006d9e
