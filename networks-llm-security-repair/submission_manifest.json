@@ -1007,7 +1007,12 @@
     "scripts/repair_common.py": "b835e0eeb3efc0b8ef259530e305d78f8abe9b2ffd166906539a0f2485621986",
     "scripts/run_agent.py": "0f748318a8f7e80dadd81c71c1936a1d58c875c5e7f9afba8e49a8cf08535aed",
     "tests/test_integrity.py": "10739c0c38f9fc4d1d59ef14290122e6c53bb2321c12c8bd0ded4762a72e0743",
-    "tests/test_model_comparison.py": "12fa126449b78801f835eab8148ea2c37cb4daef73577a54b4be011d4681cba5"
+    "tests/test_model_comparison.py": "12fa126449b78801f835eab8148ea2c37cb4daef73577a54b4be011d4681cba5",
+    "scripts/repetir_comparacion.py": "1c2db9694468e7b323ce66be0003a1761705738a6dd046b78637ecafafc40c03",
+    "tests/test_repetitions.py": "dcbdcecaf3d29d9f7430a472b42ad1d66131e8f32ece0bf026c86ad397ef71eb",
+    "docs/repeticiones-luna-sol62-2026-11-24/protocolo.json": "d43330907d6f177206fe4ede1b750760c606ef395b55778a61204639d551f88d",
+    "docs/repeticiones-luna-sol62-2026-11-24/PROTOCOLO.md": "f410e7ea0adf86e08cb862e47b36db97bf4121d3817169a8a01fcf6a5e3681fe",
+    "docs/repeticiones-luna-sol62-2026-11-24/schedule.csv": "712af797daf8a932f864b7ba1925175d03cfdbd82ff9c18675e93c825a783716"
   },
   "distinct_cases": 10,
   "observations_per_model": 10,
