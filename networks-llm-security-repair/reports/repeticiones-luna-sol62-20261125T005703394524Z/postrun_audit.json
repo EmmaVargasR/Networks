@@ -1,0 +1,23 @@
+{
+  "all_previous_results_unchanged": true,
+  "total_complete_observations": 60,
+  "unique_model_case_round_identities": 60,
+  "unique_api_response_ids": 60,
+  "exact_requests_preserved_across_repetitions": true,
+  "all_source_hashes_match": true,
+  "metrics_recomputed_from_audited_observations": true,
+  "new_token_usage": {
+    "gpt-6-luna": {
+      "input_tokens": 94192,
+      "output_tokens": 13216,
+      "total_tokens": 107408
+    },
+    "gpt-6.2-sol": {
+      "input_tokens": 94192,
+      "output_tokens": 8178,
+      "total_tokens": 102370
+    }
+  },
+  "new_api_list_price_estimate_usd": 0.28619120000000003,
+  "note": "List-price estimate using recorded token usage, excluding AWS and any account-wide charges; not an invoice."
+}

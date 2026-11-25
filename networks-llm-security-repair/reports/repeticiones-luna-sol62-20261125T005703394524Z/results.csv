@@ -1,0 +1,61 @@
+requested_model,repetition,source_campaign,vuln_id,agent,model,timestamp,claimed_success,confidence,apply_ok,functional_pass,security_pass,verified,false_assurance,latency_ms,input_tokens,output_tokens,total_tokens,completed,notes
+gpt-6-luna,1,experimento/runs/diez-consolidados-20261124T050123103716Z,CVE-2021-32839,gpt,gpt-6-luna,2026-11-23T15:48:18.305920+00:00,1,0.88,1,1,0,0,1,10363.9,1391,892,2283,True,
+gpt-6-luna,1,experimento/runs/diez-consolidados-20261124T050123103716Z,CVE-2022-29217,gpt,gpt-6-luna,2026-11-23T15:19:35.318190+00:00,1,0.91,1,1,0,0,1,10525.8,6094,861,6955,True,
+gpt-6-luna,1,experimento/runs/diez-consolidados-20261124T050123103716Z,CVE-2023-26302,gpt,gpt-6-luna,2026-11-23T15:25:08.886819+00:00,1,0.34,1,1,0,0,1,10347.3,884,851,1735,True,
+gpt-6-luna,1,experimento/runs/diez-consolidados-20261124T050123103716Z,CVE-2023-32681,gpt,gpt-6-luna,2026-11-23T15:49:02.637261+00:00,1,0.96,1,1,1,1,0,6721.2,6528,570,7098,True,
+gpt-6-luna,1,experimento/runs/diez-consolidados-20261124T050123103716Z,CVE-2023-37271,gpt,gpt-6-luna,2026-11-23T16:10:05.181793+00:00,1,0.82,1,0,0,0,1,9462.0,8879,694,9573,True,
+gpt-6-luna,1,experimento/runs/diez-consolidados-20261124T050123103716Z,CVE-2025-43859,gpt,gpt-6-luna,2026-11-24T04:59:50.112123+00:00,1,0.95,0,0,0,0,1,7167.9,2151,502,2653,True,Patch rejected by git apply --check
+gpt-6-luna,1,experimento/runs/diez-consolidados-20261124T050123103716Z,CVE-2025-46656,gpt,gpt-6-luna,2026-11-24T04:59:58.554718+00:00,1,0.74,0,0,0,0,1,9725.8,4471,963,5434,True,Patch rejected by git apply --check
+gpt-6-luna,1,experimento/runs/diez-consolidados-20261124T050123103716Z,CVE-2023-32309,gpt,gpt-6-luna,2026-11-24T05:00:09.419450+00:00,1,0.9,0,0,0,0,1,7272.6,5079,603,5682,True,Patch rejected by git apply --check
+gpt-6-luna,1,experimento/runs/diez-consolidados-20261124T050123103716Z,CVE-2023-34457,gpt,gpt-6-luna,2026-11-24T05:00:18.632923+00:00,1,0.82,0,0,0,0,1,13911.1,6799,1041,7840,True,Patch rejected by git apply --check
+gpt-6-luna,1,experimento/runs/diez-consolidados-20261124T050123103716Z,CVE-2022-3102,gpt,gpt-6-luna,2026-11-24T05:00:33.797441+00:00,1,0.98,1,1,0,0,1,6807.0,4820,567,5387,True,
+gpt-6.2-sol,1,experimento/runs/sol62-diez-2026-11-24-r1,CVE-2021-32839,gpt,gpt-6.2-sol,2026-11-24T16:42:15.351456+00:00,1,0.98,1,1,1,1,0,9324.8,1391,352,1743,True,
+gpt-6.2-sol,1,experimento/runs/sol62-diez-2026-11-24-r1,CVE-2022-29217,gpt,gpt-6.2-sol,2026-11-24T16:42:52.467496+00:00,1,0.97,1,1,0,0,1,9500.9,6094,559,6653,True,
+gpt-6.2-sol,1,experimento/runs/sol62-diez-2026-11-24-r1,CVE-2023-26302,gpt,gpt-6.2-sol,2026-11-24T16:43:31.517980+00:00,1,0.96,1,1,0,0,1,6966.2,884,288,1172,True,
+gpt-6.2-sol,1,experimento/runs/sol62-diez-2026-11-24-r1,CVE-2023-32681,gpt,gpt-6.2-sol,2026-11-24T16:44:10.017031+00:00,1,0.99,1,1,1,1,0,3938.2,6528,153,6681,True,
+gpt-6.2-sol,1,experimento/runs/sol62-diez-2026-11-24-r1,CVE-2023-37271,gpt,gpt-6.2-sol,2026-11-24T16:46:30.941145+00:00,1,0.94,0,0,0,0,1,10569.3,8879,444,9323,True,Patch rejected by git apply --check
+gpt-6.2-sol,1,experimento/runs/sol62-diez-2026-11-24-r1,CVE-2025-43859,gpt,gpt-6.2-sol,2026-11-24T16:46:42.767505+00:00,1,0.99,0,0,0,0,1,7681.6,2151,451,2602,True,Patch rejected by git apply --check
+gpt-6.2-sol,1,experimento/runs/sol62-diez-2026-11-24-r1,CVE-2025-46656,gpt,gpt-6.2-sol,2026-11-24T16:46:51.609567+00:00,1,0.95,1,1,0,0,1,5346.1,4471,195,4666,True,
+gpt-6.2-sol,1,experimento/runs/sol62-diez-2026-11-24-r1,CVE-2023-32309,gpt,gpt-6.2-sol,2026-11-24T16:47:26.319301+00:00,1,0.92,0,0,0,0,1,7316.5,5079,538,5617,True,Patch rejected by git apply --check
+gpt-6.2-sol,1,experimento/runs/sol62-diez-2026-11-24-r1,CVE-2023-34457,gpt,gpt-6.2-sol,2026-11-24T16:47:35.145304+00:00,1,0.94,0,0,0,0,1,11862.3,6799,563,7362,True,Patch rejected by git apply --check
+gpt-6.2-sol,1,experimento/runs/sol62-diez-2026-11-24-r1,CVE-2022-3102,gpt,gpt-6.2-sol,2026-11-24T16:47:48.155331+00:00,0,0.91,1,0,0,0,0,11496.3,4820,644,5464,True,
+gpt-6-luna,2,experimento/runs/luna-diez-2026-11-24-rep2,CVE-2021-32839,gpt,gpt-6-luna,2026-11-25T00:41:10.971824+00:00,1,0.99,0,0,0,0,1,6517.8,1391,686,2077,True,Patch rejected by git apply --check
+gpt-6-luna,2,experimento/runs/luna-diez-2026-11-24-rep2,CVE-2022-29217,gpt,gpt-6-luna,2026-11-25T00:42:04.146752+00:00,1,0.88,0,0,0,0,1,6852.9,6094,806,6900,True,Patch rejected by git apply --check
+gpt-6-luna,2,experimento/runs/luna-diez-2026-11-24-rep2,CVE-2023-26302,gpt,gpt-6-luna,2026-11-25T00:42:12.320452+00:00,1,0.72,1,1,0,0,1,5087.1,884,576,1460,True,
+gpt-6-luna,2,experimento/runs/luna-diez-2026-11-24-rep2,CVE-2023-32681,gpt,gpt-6-luna,2026-11-25T00:45:47.966701+00:00,1,0.92,0,0,0,0,1,6286.5,6528,695,7223,True,Patch rejected by git apply --check
+gpt-6-luna,2,experimento/runs/luna-diez-2026-11-24-rep2,CVE-2023-37271,gpt,gpt-6-luna,2026-11-25T00:45:55.646667+00:00,1,0.88,1,0,0,0,1,5524.9,8879,754,9633,True,
+gpt-6-luna,2,experimento/runs/luna-diez-2026-11-24-rep2,CVE-2025-43859,gpt,gpt-6-luna,2026-11-25T00:47:14.680187+00:00,1,0.75,0,0,0,0,1,7003.3,2151,914,3065,True,Patch rejected by git apply --check
+gpt-6-luna,2,experimento/runs/luna-diez-2026-11-24-rep2,CVE-2025-46656,gpt,gpt-6-luna,2026-11-25T00:47:22.896495+00:00,1,0.84,0,0,0,0,1,6064.2,4471,885,5356,True,Patch rejected by git apply --check
+gpt-6-luna,2,experimento/runs/luna-diez-2026-11-24-rep2,CVE-2023-32309,gpt,gpt-6-luna,2026-11-25T00:48:13.992289+00:00,1,0.87,0,0,0,0,1,5541.4,5079,739,5818,True,Patch rejected by git apply --check
+gpt-6-luna,2,experimento/runs/luna-diez-2026-11-24-rep2,CVE-2023-34457,gpt,gpt-6-luna,2026-11-25T00:48:21.039423+00:00,1,0.97,0,0,0,0,1,4155.4,6799,561,7360,True,Patch rejected by git apply --check
+gpt-6-luna,2,experimento/runs/luna-diez-2026-11-24-rep2,CVE-2022-3102,gpt,gpt-6-luna,2026-11-25T00:48:45.084504+00:00,1,0.86,1,1,0,0,1,3406.6,4820,403,5223,True,
+gpt-6.2-sol,2,experimento/runs/sol62-diez-2026-11-24-rep2,CVE-2021-32839,gpt,gpt-6.2-sol,2026-11-25T00:41:18.976527+00:00,1,0.99,0,0,0,0,1,6435.8,1391,402,1793,True,Patch rejected by git apply --check
+gpt-6.2-sol,2,experimento/runs/sol62-diez-2026-11-24-rep2,CVE-2022-29217,gpt,gpt-6.2-sol,2026-11-25T00:41:26.651045+00:00,1,0.98,1,1,0,0,1,5426.1,6094,355,6449,True,
+gpt-6.2-sol,2,experimento/runs/sol62-diez-2026-11-24-rep2,CVE-2023-26302,gpt,gpt-6.2-sol,2026-11-25T00:42:49.401781+00:00,1,0.93,1,1,0,0,1,4700.1,884,274,1158,True,
+gpt-6.2-sol,2,experimento/runs/sol62-diez-2026-11-24-rep2,CVE-2023-32681,gpt,gpt-6.2-sol,2026-11-25T00:43:25.287080+00:00,1,0.99,1,1,1,1,0,4073.2,6528,153,6681,True,
+gpt-6.2-sol,2,experimento/runs/sol62-diez-2026-11-24-rep2,CVE-2023-37271,gpt,gpt-6.2-sol,2026-11-25T00:46:28.839271+00:00,1,0.92,0,0,0,0,1,8877.3,8879,485,9364,True,Patch rejected by git apply --check
+gpt-6.2-sol,2,experimento/runs/sol62-diez-2026-11-24-rep2,CVE-2025-43859,gpt,gpt-6.2-sol,2026-11-25T00:46:38.978358+00:00,1,0.99,1,1,1,1,0,7337.9,2151,547,2698,True,
+gpt-6.2-sol,2,experimento/runs/sol62-diez-2026-11-24-rep2,CVE-2025-46656,gpt,gpt-6.2-sol,2026-11-25T00:47:30.230067+00:00,1,0.9,1,1,0,0,1,5334.2,4471,222,4693,True,
+gpt-6.2-sol,2,experimento/runs/sol62-diez-2026-11-24-rep2,CVE-2023-32309,gpt,gpt-6.2-sol,2026-11-25T00:48:05.367161+00:00,1,0.94,0,0,0,0,1,6942.1,5079,521,5600,True,Patch rejected by git apply --check
+gpt-6.2-sol,2,experimento/runs/sol62-diez-2026-11-24-rep2,CVE-2023-34457,gpt,gpt-6.2-sol,2026-11-25T00:48:26.437823+00:00,1,0.94,0,0,0,0,1,7057.4,6799,379,7178,True,Patch rejected by git apply --check
+gpt-6.2-sol,2,experimento/runs/sol62-diez-2026-11-24-rep2,CVE-2022-3102,gpt,gpt-6.2-sol,2026-11-25T00:48:34.716383+00:00,0,0.86,0,0,0,0,0,9128.9,4820,621,5441,True,Patch rejected by git apply --check
+gpt-6-luna,3,experimento/runs/luna-diez-2026-11-24-rep3,CVE-2021-32839,gpt,gpt-6-luna,2026-11-25T00:49:33.457292+00:00,1,0.99,1,1,1,1,0,3080.6,1391,383,1774,True,
+gpt-6-luna,3,experimento/runs/luna-diez-2026-11-24-rep3,CVE-2022-29217,gpt,gpt-6-luna,2026-11-25T00:50:02.669979+00:00,1,0.94,0,0,0,0,1,4579.4,6094,579,6673,True,Patch rejected by git apply --check
+gpt-6-luna,3,experimento/runs/luna-diez-2026-11-24-rep3,CVE-2023-26302,gpt,gpt-6-luna,2026-11-25T00:50:49.677843+00:00,1,0.63,1,1,0,0,1,5236.2,884,596,1480,True,
+gpt-6-luna,3,experimento/runs/luna-diez-2026-11-24-rep3,CVE-2023-32681,gpt,gpt-6-luna,2026-11-25T00:51:24.893427+00:00,1,0.97,0,0,0,0,1,6512.2,6528,754,7282,True,Patch rejected by git apply --check
+gpt-6-luna,3,experimento/runs/luna-diez-2026-11-24-rep3,CVE-2023-37271,gpt,gpt-6-luna,2026-11-25T00:54:01.108760+00:00,1,0.84,0,0,0,0,1,6256.8,8879,581,9460,True,Patch rejected by git apply --check
+gpt-6-luna,3,experimento/runs/luna-diez-2026-11-24-rep3,CVE-2025-43859,gpt,gpt-6-luna,2026-11-25T00:54:08.621113+00:00,1,0.78,0,0,0,0,1,5563.9,2151,741,2892,True,Patch rejected by git apply --check
+gpt-6-luna,3,experimento/runs/luna-diez-2026-11-24-rep3,CVE-2025-46656,gpt,gpt-6-luna,2026-11-25T00:55:30.571507+00:00,1,0.86,0,0,0,0,1,6684.5,4471,926,5397,True,Patch rejected by git apply --check
+gpt-6-luna,3,experimento/runs/luna-diez-2026-11-24-rep3,CVE-2023-32309,gpt,gpt-6-luna,2026-11-25T00:55:38.460119+00:00,1,0.94,0,0,0,0,1,5498.6,5079,651,5730,True,Patch rejected by git apply --check
+gpt-6-luna,3,experimento/runs/luna-diez-2026-11-24-rep3,CVE-2023-34457,gpt,gpt-6-luna,2026-11-25T00:56:00.678355+00:00,1,0.97,0,0,0,0,1,5042.7,6799,636,7435,True,Patch rejected by git apply --check
+gpt-6-luna,3,experimento/runs/luna-diez-2026-11-24-rep3,CVE-2022-3102,gpt,gpt-6-luna,2026-11-25T00:56:07.343373+00:00,1,0.99,1,1,0,0,1,3105.3,4820,350,5170,True,
+gpt-6.2-sol,3,experimento/runs/sol62-diez-2026-11-24-rep3,CVE-2021-32839,gpt,gpt-6.2-sol,2026-11-25T00:49:26.342070+00:00,1,0.99,0,0,0,0,1,5798.6,1391,352,1743,True,Patch rejected by git apply --check
+gpt-6.2-sol,3,experimento/runs/sol62-diez-2026-11-24-rep3,CVE-2022-29217,gpt,gpt-6.2-sol,2026-11-25T00:50:08.585456+00:00,1,0.97,0,0,0,0,1,4650.7,6094,306,6400,True,Patch rejected by git apply --check
+gpt-6.2-sol,3,experimento/runs/sol62-diez-2026-11-24-rep3,CVE-2023-26302,gpt,gpt-6.2-sol,2026-11-25T00:50:14.491419+00:00,1,0.97,1,1,0,0,1,4359.5,884,274,1158,True,
+gpt-6.2-sol,3,experimento/runs/sol62-diez-2026-11-24-rep3,CVE-2023-32681,gpt,gpt-6.2-sol,2026-11-25T00:51:32.763718+00:00,1,0.99,1,1,1,1,0,3002.1,6528,155,6683,True,
+gpt-6.2-sol,3,experimento/runs/sol62-diez-2026-11-24-rep3,CVE-2023-37271,gpt,gpt-6.2-sol,2026-11-25T00:53:52.736654+00:00,1,0.92,0,0,0,0,1,7074.2,8879,383,9262,True,Patch rejected by git apply --check
+gpt-6.2-sol,3,experimento/runs/sol62-diez-2026-11-24-rep3,CVE-2025-43859,gpt,gpt-6.2-sol,2026-11-25T00:54:15.426254+00:00,1,0.99,1,1,1,1,0,7077.8,2151,501,2652,True,
+gpt-6.2-sol,3,experimento/runs/sol62-diez-2026-11-24-rep3,CVE-2025-46656,gpt,gpt-6.2-sol,2026-11-25T00:54:50.176992+00:00,1,0.88,1,1,0,0,1,11070.3,4471,788,5259,True,
+gpt-6.2-sol,3,experimento/runs/sol62-diez-2026-11-24-rep3,CVE-2023-32309,gpt,gpt-6.2-sol,2026-11-25T00:55:45.586706+00:00,1,0.94,0,0,0,0,1,4794.2,5079,302,5381,True,Patch rejected by git apply --check
+gpt-6.2-sol,3,experimento/runs/sol62-diez-2026-11-24-rep3,CVE-2023-34457,gpt,gpt-6.2-sol,2026-11-25T00:55:51.725628+00:00,1,0.94,0,0,0,0,1,7716.0,6799,500,7299,True,Patch rejected by git apply --check
+gpt-6.2-sol,3,experimento/runs/sol62-diez-2026-11-24-rep3,CVE-2022-3102,gpt,gpt-6.2-sol,2026-11-25T00:56:52.308213+00:00,1,0.85,0,0,0,0,1,9772.6,4820,658,5478,True,Patch rejected by git apply --check

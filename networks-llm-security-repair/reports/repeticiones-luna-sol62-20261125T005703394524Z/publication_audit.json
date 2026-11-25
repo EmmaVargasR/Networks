@@ -1,0 +1,14 @@
+{
+  "checked_utc": "2026-11-25T01:09:15.575886+00:00",
+  "base_main_commit": "f836b3b535c40ed2e889dd75d683797bf9d47ba2",
+  "source_observations_audited": 60,
+  "unique_model_case_round_identities": 60,
+  "all_frozen_evidence_hashes_match": true,
+  "readme_recalculation_example_matches_summary_without_api": true,
+  "existing_results_and_evidence_unchanged": true,
+  "only_existing_files_modified": [
+    "README.md",
+    "submission_manifest.json"
+  ],
+  "credential_scan": "No matching API keys, AWS access keys, private key blocks, .env, .pem or .key files"
+}
